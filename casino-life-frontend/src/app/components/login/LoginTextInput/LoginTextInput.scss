@@ -1,0 +1,70 @@
+.login-text-input {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  display: grid;
+  row-gap: 16px;
+  padding: 0 16px;
+}
+
+.login-text-input input {
+  height: 3.2rem;
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+  color: #fff;
+  padding: 0 16px;
+  font-size: 1rem;
+  outline: none;
+}
+.login-text-input input::placeholder {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.login-text-input button[type="submit"] {
+  height: 3.2rem;
+  width: 100%;
+  border: none;
+  border-radius: 14px;
+  background: #2E2E30;  /* primary */
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 120ms ease, opacity 120ms ease;
+}
+.login-text-input button[type="submit"]:hover {
+  transform: translateY(-1px);
+}
+.login-text-input button[type="submit"]:disabled,
+.login-text-input button[type="submit"][aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.login-text-input .back-link {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: max-content;
+  justify-self: center;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+.login-text-input .back-link:hover {
+  text-decoration: underline;
+}
+
+/* accesibilidad */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0);
+  white-space: nowrap; border: 0;
+}

@@ -6,15 +6,16 @@ type Variant = "primary" | "secondary";
 type LoginButtonProps = {
   text: string;
   variant?: Variant;
-  to?: string; 
-  query?: Record<string, string | number | boolean>; 
-  widthRem?: number;  
-  heightRem?: number; 
-  onClick?: () => void; 
-  className?: string;  
+  to?: string;
+  query?: Record<string, string | number | boolean>;
+  widthRem?: number;
+  heightRem?: number;
+  onClick?: () => void;
+  className?: string;
+  style?: React.CSSProperties; // 👈 nuevo prop
 };
 
-const PRIMARY_BG = "rgb(46,46,48)";       // #2E2E30
+const PRIMARY_BG = "rgb(46,46,48)"; // #2E2E30
 const SECONDARY_BG = "rgba(46,46,48,0.8)";
 
 const LoginButton: React.FC<LoginButtonProps> = ({
@@ -25,7 +26,8 @@ const LoginButton: React.FC<LoginButtonProps> = ({
   widthRem,
   heightRem,
   onClick,
-  className
+  className,
+  style, // 👈 nuevo prop
 }) => {
   const navigate = useNavigate();
 
@@ -47,7 +49,7 @@ const LoginButton: React.FC<LoginButtonProps> = ({
     }
   };
 
-  const style: React.CSSProperties = {
+  const baseStyle: React.CSSProperties = {
     width: widthRem ? `${widthRem}rem` : undefined,
     height: heightRem ? `${heightRem}rem` : undefined,
     background: variant === "secondary" ? SECONDARY_BG : PRIMARY_BG,
@@ -62,7 +64,8 @@ const LoginButton: React.FC<LoginButtonProps> = ({
     fontWeight: 600,
     lineHeight: 1,
     transition: "transform 120ms ease",
-    cursor:'pointer'
+    cursor: "pointer",
+    ...style, // 👈 permite sobreescribir o añadir estilos
   };
 
   return (
@@ -71,7 +74,7 @@ const LoginButton: React.FC<LoginButtonProps> = ({
       aria-label={text}
       onClick={handleClick}
       className={className}
-      style={style}
+      style={baseStyle}
       onMouseDown={(e) => (e.currentTarget.style.transform = "scale(0.98)")}
       onMouseUp={(e) => (e.currentTarget.style.transform = "scale(1)")}
     >

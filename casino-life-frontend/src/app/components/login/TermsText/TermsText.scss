@@ -1,0 +1,17 @@
+.terms {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 0.9375rem; /* ~15px */
+  line-height: 1.4;
+  color: rgba(217, 217, 217, 0.57); /* #d9d9d9 con 57% opacidad */
+}
+
+.terms a {
+  color: #ffffff;       /* blanco */
+  font-weight: 700;     /* negrita */
+  text-decoration: none;
+}
+
+.terms a:hover {
+  text-decoration: underline;
+}

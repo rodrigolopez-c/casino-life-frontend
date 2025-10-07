@@ -1,0 +1,31 @@
+.GamesBoard {
+  display: flex;
+  align-items: flex-end;
+  gap: 4rem;
+  overflow-x: auto;          
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory; 
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;   
+  background-color: transparent;
+  position: relative;
+  overflow: visible;
+  height: 50rem;
+  /* Firefox */
+}
+
+/* Ocultar/estilizar scrollbar (opcional) */
+
+.GamesBoard::-webkit-scrollbar-track {
+  background: transparent;
+}
+.GamesBoard::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+  border-radius: 999px;
+}
+
+/* Cada card no debe encogerse y hace snap */
+.GameCard {
+  flex: 0 0 auto;             /* 👈 no se estira/encoge; mantiene su width */
+  scroll-snap-align: start;   /* se alinea al inicio en el snap */
+}

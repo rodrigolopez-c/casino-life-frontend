@@ -1,15 +1,27 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './login/login' // 👈 importa tu Login
+import Login from './login/Login' 
+import MainBoard from './Board/MainBoard';
+import GamesBoard from './Board/GamesBoard/GamesBoard';
+import { PageProvider } from './contexts/BoardNavigation';
+import ProfileBoard from './Board/ProfileBoard/ProfileBoard';
+import RankingBoard from './Board/RankingBoard/RankingBoard';
 
 
 const App: React.FC = () => {
   return (
     <Router>
+      <PageProvider>
       <Routes>
         <Route path="/login" element={<Login />} />
+          <Route path='/board' element={<MainBoard/>}>
+           <Route path='games' element={<GamesBoard/>}/>
+           <Route path='profile' element={<ProfileBoard/>}/>
+           <Route path='ranking' element={<RankingBoard/>}/>
+        </Route>
         <Route path="*" element={<h2>Página no encontrada</h2>} />
       </Routes>
+      </PageProvider>
     </Router>
   );
 }

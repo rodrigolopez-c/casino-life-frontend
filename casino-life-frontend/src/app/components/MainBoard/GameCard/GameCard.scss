@@ -1,0 +1,60 @@
+.GameCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  transition: transform 0.7s ease-in-out, box-shadow 0.7s ease;
+  animation: slideUp 0.5s ease-out;
+  cursor: pointer;
+  z-index: 99999;
+
+
+  .GameCardImage {
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: transform 0.25s ease;
+  }
+
+  &:hover {
+    transform: translateY(-3rem);
+    z-index: 999;                  
+  }
+
+
+  .GameCardDescription {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #d9d9d9;
+    transition: color 0.7 ease;
+    transition: opacity 0.7 ease-in-out;
+    
+
+    max-width: 23rem;
+    .Description{
+        opacity: 0;
+        max-width: 100%;
+        
+    }
+
+    .Description.hovered{
+        opacity: 1;
+    }
+
+    .GameCardDescription.hovered{
+        color: white;
+    }
+    .GameCard:hover & {
+      color: #fff;
+    }
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

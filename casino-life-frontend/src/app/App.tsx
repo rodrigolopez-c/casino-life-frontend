@@ -6,6 +6,7 @@ import GamesBoard from './Board/GamesBoard/GamesBoard';
 import { PageProvider } from './contexts/BoardNavigation';
 import ProfileBoard from './Board/ProfileBoard/ProfileBoard';
 import RankingBoard from './Board/RankingBoard/RankingBoard';
+import DicesGame from './components/Dices/DicesGame';
 
 
 const App: React.FC = () => {
@@ -16,7 +17,9 @@ const App: React.FC = () => {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
           <Route path='/board' element={<MainBoard/>}>
+           <Route index element={<Navigate to="games" replace />} />
            <Route path='games' element={<GamesBoard/>}/>
+           <Route path='dices' element={<DicesGame/>}/>
            <Route path='profile' element={<ProfileBoard/>}/>
            <Route path='ranking' element={<RankingBoard/>}/>
         </Route>

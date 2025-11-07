@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import GameCard from '../../components/MainBoard/GameCard/GameCard'
 import { usePage } from '../../contexts/BoardNavigation';
 import './GamesBoard.scss';
-
+import { useNavigate } from 'react-router-dom';
 
 type GameCardData = {
   imageUrl: string;
@@ -41,6 +41,7 @@ const games: GameCardData[] = [
 export default function GamesBoard(){
 
     const { setCurrentPage } = usePage();
+    const navigate = useNavigate();
 
     useEffect(()=>{
         setCurrentPage('games')
@@ -48,17 +49,18 @@ export default function GamesBoard(){
 
     return (
       <div className='GamesBoard'>
-        {games.map((game) => (
-        <GameCard
-          key={game.title}
-          imageUrl={game.imageUrl}
-          widthRem={23}
-          heightRem={40}
-          title={game.title}
-          description={game.description}
-        >
-        </GameCard>
-      ))}
+        {games.map((game, index) => (
+          <GameCard
+            key={game.title}
+            imageUrl={game.imageUrl}
+            widthRem={23}
+            heightRem={40}
+            title={game.title}
+            description={game.description}
+            onClick={index === 0 ? () => navigate('/board/dices') : undefined} // AÑADE ESTO
+          >
+          </GameCard>
+        ))}
       </div>
     )
 }

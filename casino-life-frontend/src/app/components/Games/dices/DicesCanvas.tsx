@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import * as CANNON from 'cannon-es'
 
+
 type Pip = 1|2|3|4|5|6
 
 function createPipTexture(n: Pip, size = 256) {
@@ -96,11 +97,19 @@ function randomQuaternion(): THREE.Quaternion {
   return q.normalize()
 }
 
-const DiceCanvas: React.FC = () => {
+interface DiceCanvasProps {
+  rollTriggerRef: React.MutableRefObject<(() => void) | null>;
+  resultsRef: React.MutableRefObject<{ die1: number | null; die2: number | null }>;
+  onDiceSettled: (die1: number, die2: number) => void;
+  hasBet: boolean;
+}
+
+const DiceCanvas: React.FC<DiceCanvasProps> = ({ rollTriggerRef, resultsRef, onDiceSettled, hasBet }) => {
   const mountRef = useRef<HTMLDivElement>(null)
   const [phase, setPhase] = useState<'intro'|'table'>('intro')
   const [resultA, setResultA] = useState<number | null>(null)
   const [resultB, setResultB] = useState<number | null>(null)
+  const hasNotifiedRef = useRef(false);
 
   // refs para acceder a roll desde los botones React
   const rollRef = useRef<() => void>(() => {})
@@ -203,8 +212,11 @@ const DiceCanvas: React.FC = () => {
     const world = new CANNON.World({ gravity: new CANNON.Vec3(0, -9.82, 0) })
     world.broadphase = new CANNON.SAPBroadphase(world)
     world.allowSleep = true
-    world.solver.iterations = 20
-    world.solver.tolerance = 0.001
+    const solver = new CANNON.GSSolver() as any
+  solver.iterations = 20
+  solver.epsilon = 0.001
+
+  world.solver = solver
 
     const mat = new CANNON.Material('default')
     const cm = new CANNON.ContactMaterial(mat, mat, { friction: 0.6, restitution: 0.05 })
@@ -292,7 +304,21 @@ const DiceCanvas: React.FC = () => {
           }
           const qFinal = new THREE.Quaternion(die.body.quaternion.x, die.body.quaternion.y, die.body.quaternion.z, die.body.quaternion.w)
           const v = getTopFaceFromQuaternion(qFinal)
-          if (isA) setUIA(v); else setUIB(v)
+          if (isA) {
+            setUIA(v);
+            resultsRef.current.die1 = v;
+          } else {
+            setUIB(v);
+            resultsRef.current.die2 = v;
+          }
+
+          // Notify when both settled
+          if (settledA && settledB && !hasNotifiedRef.current && resultsRef.current.die1 !== null && resultsRef.current.die2 !== null) {
+            hasNotifiedRef.current = true;
+            setTimeout(() => {
+              onDiceSettled(resultsRef.current.die1!, resultsRef.current.die2!);
+            }, 500);
+          }
         }
       }
       handle(dieA, true)
@@ -301,6 +327,8 @@ const DiceCanvas: React.FC = () => {
 
     // ====== ROLL (expuesto por ref) ======
     function rollDice() {
+      hasNotifiedRef.current = false;
+      resultsRef.current = { die1: null, die2: null };
       const vel = () => (Math.random() * 3 + 2) * (Math.random() < 0.5 ? -1 : 1)
       const spin = () => (Math.random() * 6 + 4) * (Math.random() < 0.5 ? -1 : 1)
 
@@ -319,6 +347,7 @@ const DiceCanvas: React.FC = () => {
     }
     rollRef.current = rollDice
     readyRef.current = () => settledA && settledB
+    rollTriggerRef.current = rollDice;
 
     // ====== LOOP ======
     const fixedTimeStep = 1/120
@@ -426,7 +455,7 @@ const DiceCanvas: React.FC = () => {
               background: 'rgba(255,255,255,.08)', backdropFilter: 'blur(8px)',
               border: '1px solid rgba(255,255,255,0.12)'
             }}>
-              <button onClick={roll} title="Tirar"
+              <button onClick={roll} title="Tirar" disabled={!hasBet}
                 style={{
                   padding: '10px 16px', borderRadius: 12, border: '1px solid rgba(255,255,255,0.18)',
                   background: 'linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06))',

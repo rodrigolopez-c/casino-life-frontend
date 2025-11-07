@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { usePage } from '../../contexts/BoardNavigation';
-import DiceCanvas from '../../components/Dices/DicesCanvas';
+import DiceCanvas from '../../components/Games/dices/DicesCanvas';
 
 export default function ProfileBoard() {
     const { setCurrentPage } = usePage();

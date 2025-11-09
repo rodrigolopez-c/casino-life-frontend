@@ -1,73 +1,52 @@
-# React + TypeScript + Vite
+Para correr dev:
+npm i
+npm run dev
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---PARA CREAR JUEGOS---
 
-Currently, two official plugins are available:
+Cada juego esta dentro de:
+src/app/components/Games/<nombreDelJuego>/
+│
+├── index.tsx       ← Componente principal del juego (React)
+├── styles.scss      ← Estilos específicos del juego
+└── config.json      ← Configuración del juego (título, descripción e imagen)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Todos los juegos deben tener un index.tsx y un config.json
 
-## React Compiler
+La estructura del config.json:
+{
+  "title": "Dices",
+  "description": "Lanza los dados y pon a prueba tu suerte.",
+  "imageUrl": "/GamesCards/dices.png"
+}
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Esto es la configuracion para que se muestre cada juego con su titulo descripcion y su imagen
 
-## Expanding the ESLint configuration
+---PARA CREAR UN JUEGO----
+npm run casino create game <nombreDelJuego>
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Este comando creara la siguiente estructura dentro de src/app/components/Games/
+├── index.tsx
+├── styles.scss
+└── config.json
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+no cambiar el nombre de index.tsx ni config.json
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+EJEMPLO:
+npm run casino create game blackjack
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+creara:
+src/app/components/Games/blackjack/
+├── index.tsx
+├── styles.scss
+└── config.json
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Y el juego aparecerá automáticamente en:
+	•	La pantalla principal de juegos (/board/games)
+	•	Su propia ruta individual (/board/games/blackjack)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+-------------------------------------------------------
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+	•	Ejecuta el comando desde la raíz del proyecto (no desde src).
+	•	Cada juego debe exportar un componente React por defecto desde su index.tsx.
+	•	El sistema carga automáticamente todas las carpetas dentro de: /src/app/components/Games/

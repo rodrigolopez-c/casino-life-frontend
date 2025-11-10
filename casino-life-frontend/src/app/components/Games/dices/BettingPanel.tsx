@@ -13,12 +13,13 @@ interface BettingPanelProps {
     balance: number;
     onPlaceBet: (betType: string, amount: number, value?: number, target?: string) => void;
     disabled: boolean;
+    isRolling: boolean;
 }
 
-const BettingPanel: React.FC<BettingPanelProps> = ({ balance, onPlaceBet, disabled }) => {
+const BettingPanel: React.FC<BettingPanelProps> = ({ balance, onPlaceBet, disabled, isRolling }) => {
     const [selectedBet, setSelectedBet] = useState<BetOption | null>(null);
     const [betAmount, setBetAmount] = useState<number>(10);
-    const [specificValue, setSpecificValue] = useState<number>(7);
+    const [specificValue, setSpecificValue] = useState<number>(0);
 
     const betOptions: BetOption[] = [
         { type: 'even', label: 'Par (suma)', multiplier: 2 },
@@ -32,8 +33,13 @@ const BettingPanel: React.FC<BettingPanelProps> = ({ balance, onPlaceBet, disabl
     const handlePlaceBet = () => {
         if (!selectedBet || betAmount <= 0 || betAmount > balance) return;
         
-        const value = selectedBet.requiresValue ? specificValue : undefined;
-        onPlaceBet(selectedBet.type, betAmount, value, selectedBet.target);
+        let value = specificValue;
+        if (selectedBet.requiresValue && specificValue === 0) {
+            value = selectedBet.target ? 1 : 7;
+            setSpecificValue(value);
+        }
+        
+        onPlaceBet(selectedBet.type, betAmount, selectedBet.requiresValue ? value : undefined, selectedBet.target);
     };
 
     return (
@@ -59,29 +65,69 @@ const BettingPanel: React.FC<BettingPanelProps> = ({ balance, onPlaceBet, disabl
         </div>
 
         {selectedBet?.requiresValue && (
-            <div className="specific-value">
+        <div className="specific-value">
             <label>Número:</label>
             <input
-                type="number"
-                min={selectedBet.target ? 1 : 2}
-                max={selectedBet.target ? 6 : 12}
-                value={specificValue}
-                onChange={(e) => setSpecificValue(Number(e.target.value))}
-                disabled={disabled}
+            type="text"
+            value={specificValue === 0 ? '' : specificValue}
+            onChange={(e) => {
+                const value = e.target.value;
+                const min = selectedBet.target ? 1 : 2;
+                const max = selectedBet.target ? 6 : 12;
+                
+                if (value === '') {
+                setSpecificValue(0);
+                return;
+                }
+                
+                if (/^\d+$/.test(value)) {
+                const num = Number(value);
+                if (num >= min && num <= max) {
+                    setSpecificValue(num);
+                }
+                }
+            }}
+            onBlur={(e) => {
+                if (e.target.value === '' || Number(e.target.value) === 0) {
+                setSpecificValue(selectedBet.target ? 1 : 7);
+                }
+            }}
+            placeholder={`${selectedBet.target ? '1-6' : '2-12'}`}
+            disabled={disabled}
+            style={{ textAlign: 'center' }}
             />
-            </div>
+        </div>
         )}
 
         <div className="bet-amount">
             <label>Monto de apuesta:</label>
             <input
-            type="number"
-            min={1}
-            max={balance}
-            value={betAmount}
-            onChange={(e) => setBetAmount(Number(e.target.value))}
-            disabled={disabled}
-            />
+                type="text"
+                value={betAmount === 0 ? '' : betAmount}
+                onChange={(e) => {
+                    const value = e.target.value;
+                    
+                    if (value === '') {
+                    setBetAmount(0);
+                    return;
+                    }
+                    
+                    if (/^\d+$/.test(value)) {
+                    const num = Number(value);
+                    if (num <= balance) {
+                        setBetAmount(num);
+                    }
+                    }
+                }}
+                onBlur={(e) => {
+                    if (e.target.value === '' || Number(e.target.value) === 0) {
+                    setBetAmount(10);
+                    }
+                }}
+                placeholder="Monto"
+                disabled={disabled}
+                style={{ textAlign: 'center' }}
+                />
             <div className="quick-amounts">
             {[10, 25, 50, 100].map((amount) => (
                 <button
@@ -99,9 +145,15 @@ const BettingPanel: React.FC<BettingPanelProps> = ({ balance, onPlaceBet, disabl
         <button
             className="place-bet-btn"
             onClick={handlePlaceBet}
-            disabled={disabled || !selectedBet || betAmount > balance}
-        >
-            {disabled ? 'Tirando...' : 'Realizar Apuesta'}
+            disabled={
+                disabled || 
+                !selectedBet || 
+                betAmount === 0 || 
+                betAmount > balance ||
+                (selectedBet?.requiresValue && specificValue === 0)
+            }
+            >
+            {isRolling ? 'Tirando...' : 'Realizar Apuesta'}
         </button>
         </div>
     );

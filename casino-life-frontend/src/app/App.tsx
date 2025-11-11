@@ -7,7 +7,7 @@ import ProfileBoard from './Board/ProfileBoard/ProfileBoard';
 import RankingBoard from './Board/RankingBoard/RankingBoard';
 import { PageProvider } from './contexts/BoardNavigation';
 import { BalanceProvider } from './contexts/BalanceContext';
-import { games } from './routes/dynamicGames'; // 👈 Importa el sistema dinámico
+import { games } from './routes/dynamicGames';
 
 const App: React.FC = () => {
   return (
@@ -26,7 +26,7 @@ const App: React.FC = () => {
               <Route path="profile" element={<ProfileBoard />} />
               <Route path="ranking" element={<RankingBoard />} />
 
-              {/* 🔥 Aquí generamos dinámicamente todos los juegos */}
+              {/*Aquí generamos dinámicamente los juegos */}
               {games.map(({ id, Component }) => (
                 <Route key={id} path={`games/${id}`} element={<Component />} />
               ))}

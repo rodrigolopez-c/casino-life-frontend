@@ -1,7 +1,7 @@
 import React from "react";
 
 type IconProps = React.SVGProps<SVGSVGElement> & {
-  size?: number | string; // puedes pasar "1.5rem" o 24
+  size?: number | string;
   color?: string;
 };
 

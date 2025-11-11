@@ -1,60 +1,59 @@
 .GameCard {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 0.8rem;
-  transition: transform 0.7s ease-in-out, box-shadow 0.7s ease;
-  animation: slideUp 0.5s ease-out;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 1.2rem;
+  padding: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
-  z-index: 99999;
-
-
-  .GameCardImage {
-    border-radius: 1rem;
-    overflow: hidden;
-    transition: transform 0.25s ease;
-  }
 
   &:hover {
-    transform: translateY(-3rem);
-    z-index: 999;                  
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.15);
   }
 
+  .GameCardImage {
+    width: 100%;
+    aspect-ratio: 3 / 4.3;
+    border-radius: 1rem;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
 
   .GameCardDescription {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #d9d9d9;
-    transition: color 0.7 ease;
-    transition: opacity 0.7 ease-in-out;
-    
+    text-align: center;
+    margin-top: 0.8rem;
 
-    max-width: 23rem;
-    .Description{
-        opacity: 0;
-        max-width: 100%;
-        
-    }
-
-    .Description.hovered{
-        opacity: 1;
-    }
-
-    .GameCardDescription.hovered{
-        color: white;
-    }
-    .GameCard:hover & {
+    span {
+      display: block;
+      font-size: 1.1rem;
+      font-weight: 600;
       color: #fff;
+      margin-bottom: 0.4rem;
+    }
+
+    p {
+      font-size: 0.9rem;
+      color: #ccc;
+      line-height: 1.4;
     }
   }
 }
 
-@keyframes slideUp {
-  from {
-    transform: translateY(50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .GameCard {
+    max-width: 100%;
+    padding: 0.8rem;
+    .GameCardImage {
+      aspect-ratio: 3 / 4;
+    }
+    .GameCardDescription span {
+      font-size: 1rem;
+    }
   }
 }

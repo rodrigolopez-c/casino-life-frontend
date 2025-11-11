@@ -1,64 +1,29 @@
-import { useEffect } from 'react';
-import GameCard from '../../components/MainBoard/GameCard/GameCard'
-import { usePage } from '../../contexts/BoardNavigation';
-import './GamesBoard.scss';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { games } from "../../routes/dynamicGames";
+import GameCard from "../../components/MainBoard/GameCard/GameCard";
+import { usePage } from "../../contexts/BoardNavigation";
+import "./GamesBoard.scss";
 
+export default function GamesBoard() {
+  const { setCurrentPage } = usePage();
+  const navigate = useNavigate();
 
-type GameCardData = {
-  imageUrl: string;
-  title: string;
-  description: string;
-};
+  useEffect(() => {
+    setCurrentPage("games");
+  }, []);
 
-const games: GameCardData[] = [
-  {
-    imageUrl: "/GamesCards/game1.png",
-    title: "Dices",
-    description: "Dices is a quick casino game where you roll the dice and hope to land the highest total possible amount.",
-  },
-  {
-    imageUrl: "/GamesCards/game2.png",
-    title: "High-Low?",
-    description: "is a simple casino card game where you guess whether the next card drawn will be higher or lower than the current one.",
-  },
-  {
-    imageUrl: "/GamesCards/game4.png",
-    title: "BlackJack",
-    description: "Blackjack is a classic casino card game where you aim to reach 21 or get closer to it than the dealer without going over.",
-  },
-  {
-    imageUrl: "/GamesCards/game6.png",
-    title: "Coin Flip",
-    description: "Coin Flip is a quick casino game of chance where you simply guess whether the coin will land on heads or tails — a 50/50 shot to win.",
-  },
-  {
-    imageUrl: "/GamesCards/game3.png",
-    title: "BlackJack",
-    description: "Reach 21 without going over — beat the dealer to win.",
-  },
-]
-
-export default function GamesBoard(){
-
-    const { setCurrentPage } = usePage();
-
-    useEffect(()=>{
-        setCurrentPage('games')
-    },[])
-
-    return (
-      <div className='GamesBoard'>
-        {games.map((game) => (
+  return (
+    <div className="GamesBoard">
+      {games.map(({ id, config }) => (
         <GameCard
-          key={game.title}
-          imageUrl={game.imageUrl}
-          widthRem={23}
-          heightRem={40}
-          title={game.title}
-          description={game.description}
-        >
-        </GameCard>
+          key={id}
+          imageUrl={config.imageUrl}
+          title={config.title}
+          description={config.description}
+          onClick={() => navigate(`/board/games/${id}`)}
+        />
       ))}
-      </div>
-    )
+    </div>
+  );
 }

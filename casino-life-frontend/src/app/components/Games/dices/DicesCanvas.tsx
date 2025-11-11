@@ -101,10 +101,12 @@ interface DiceCanvasProps {
   rollTriggerRef: React.MutableRefObject<(() => void) | null>;
   resultsRef: React.MutableRefObject<{ die1: number | null; die2: number | null }>;
   onDiceSettled: (die1: number, die2: number) => void;
-  hasBet: boolean;
+  canBet: boolean;
+  onGameStart: () => void;
+  currentBetMessage: string;
 }
 
-const DiceCanvas: React.FC<DiceCanvasProps> = ({ rollTriggerRef, resultsRef, onDiceSettled, hasBet }) => {
+const DiceCanvas: React.FC<DiceCanvasProps> = ({ rollTriggerRef, resultsRef, onDiceSettled, canBet, onGameStart, currentBetMessage }) => {
   const mountRef = useRef<HTMLDivElement>(null)
   const [phase, setPhase] = useState<'intro'|'table'>('intro')
   const [resultA, setResultA] = useState<number | null>(null)
@@ -144,7 +146,7 @@ const DiceCanvas: React.FC<DiceCanvasProps> = ({ rollTriggerRef, resultsRef, onD
       cam.lookAt(0, 0, 0)
       return cam
     }
-    let camera = makeOrtho()
+    const camera = makeOrtho()
 
     const renderer = new THREE.WebGLRenderer({ antialias: true })
     renderer.setSize(mount.clientWidth, mount.clientHeight)
@@ -353,27 +355,33 @@ const DiceCanvas: React.FC<DiceCanvasProps> = ({ rollTriggerRef, resultsRef, onD
     const fixedTimeStep = 1/120
     const maxSubSteps = 3
     let last = performance.now()
+    let animationId: number;
 
     function animate(now = performance.now()) {
-      requestAnimationFrame(animate)
-      const dt = Math.min(0.05, (now - last) / 1000)
-      last = now
-      world.step(fixedTimeStep, dt, maxSubSteps)
+      animationId = requestAnimationFrame(animate);
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      world.step(fixedTimeStep, dt, maxSubSteps);
 
       ;[dieA, dieB].forEach(({ mesh, body }) => {
-        mesh.position.set(body.position.x, body.position.y, body.position.z)
-        mesh.quaternion.set(body.quaternion.x, body.quaternion.y, body.quaternion.z, body.quaternion.w)
-      })
+        mesh.position.set(body.position.x, body.position.y, body.position.z);
+        mesh.quaternion.set(body.quaternion.x, body.quaternion.y, body.quaternion.z, body.quaternion.w);
+      });
 
-      checkSettled()
-      renderer.render(scene, camera)
+      checkSettled();
+      renderer.render(scene, camera);
     }
-    animate()
+    animate();
 
     // responsive
     const onResize = () => {
-      renderer.setSize(mount.clientWidth, mount.clientHeight)
-      camera = makeOrtho()
+      renderer.setSize(mount.clientWidth, mount.clientHeight);
+      const newCamera = makeOrtho();
+      camera.left = newCamera.left;
+      camera.right = newCamera.right;
+      camera.top = newCamera.top;
+      camera.bottom = newCamera.bottom;
+      camera.updateProjectionMatrix();
     }
     const ro = new ResizeObserver(onResize)
     ro.observe(mount)
@@ -406,7 +414,10 @@ const DiceCanvas: React.FC<DiceCanvasProps> = ({ rollTriggerRef, resultsRef, onD
               Dos dados 3D con física realista. Vista cenital, arena cerrada y resultados legibles.
             </div>
             <button
-              onClick={() => setPhase('table')}
+              onClick={() => {
+                setPhase('table');
+                onGameStart();
+              }}
               style={{
                 padding: '12px 18px', borderRadius: 12, border: '1px solid rgba(255,255,255,0.15)',
                 background: 'linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06))',
@@ -445,7 +456,7 @@ const DiceCanvas: React.FC<DiceCanvasProps> = ({ rollTriggerRef, resultsRef, onD
             </div>
           </div>
 
-          {/* Barra inferior: botones */}
+          {/* Barra inferior: mensaje de apuesta actual */}
           <div style={{
             position: 'absolute', bottom: 16, left: 0, right: 0, display: 'flex',
             justifyContent: 'center'
@@ -453,16 +464,17 @@ const DiceCanvas: React.FC<DiceCanvasProps> = ({ rollTriggerRef, resultsRef, onD
             <div style={{
               display: 'flex', gap: 12, padding: '10px 14px', borderRadius: 14,
               background: 'rgba(255,255,255,.08)', backdropFilter: 'blur(8px)',
-              border: '1px solid rgba(255,255,255,0.12)'
+              border: '1px solid rgba(255,255,255,0.12)',
+              alignItems: 'center'
             }}>
-              <button onClick={roll} title="Tirar" disabled={!hasBet}
-                style={{
-                  padding: '10px 16px', borderRadius: 12, border: '1px solid rgba(255,255,255,0.18)',
-                  background: 'linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06))',
-                  color: '#fff', fontWeight: 700, cursor: 'pointer'
-                }}>
-                Tirar
-              </button>
+              <div style={{
+                color: '#fff',
+                fontFamily: 'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
+                fontSize: '14px',
+                fontWeight: 600
+              }}>
+                Apuesta actual: {currentBetMessage}
+              </div>
               <button onClick={() => { setPhase('intro'); setResultA(null); setResultB(null); }}
                 style={{
                   padding: '10px 16px', borderRadius: 12, border: '1px solid rgba(255,255,255,0.18)',
@@ -473,6 +485,7 @@ const DiceCanvas: React.FC<DiceCanvasProps> = ({ rollTriggerRef, resultsRef, onD
               </button>
             </div>
           </div>
+          
         </>
       )}
     </div>

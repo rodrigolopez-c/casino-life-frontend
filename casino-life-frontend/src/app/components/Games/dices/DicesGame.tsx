@@ -1,8 +1,8 @@
 import React, { useState, useRef } from 'react';
 import DiceCanvas from './DicesCanvas';
 import BettingPanel from './BettingPanel';
-import ResultModal from './ResultModal';
-import type { Bet, DiceResult } from './types';
+import ResultModal from '../shared/ResultModal';
+import type { Bet, DiceResult } from '../shared/types';
 import { useBalance } from '../../../contexts/BalanceContext';
 
 export default function DicesGame() {
@@ -186,9 +186,7 @@ export default function DicesGame() {
         <ResultModal
           won={lastWin}
           amount={winAmount}
-          die1={lastResult.die1}
-          die2={lastResult.die2}
-          sum={lastResult.sum}
+          result={`${lastResult.die1} + ${lastResult.die2} = ${lastResult.sum}`}
           onClose={handleCloseModal}
         />
       )}

@@ -57,7 +57,11 @@ export default function GamesBoard(){
             heightRem={40}
             title={game.title}
             description={game.description}
-            onClick={index === 0 ? () => navigate('/board/dices') : undefined} // AÑADE ESTO
+            onClick={
+              index === 0 ? () => navigate('/board/dices') : 
+              index === 3 ? () => navigate('/board/coin-flip') :
+              undefined
+            }
           >
           </GameCard>
         ))}

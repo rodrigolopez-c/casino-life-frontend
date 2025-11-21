@@ -1,0 +1,155 @@
+// 3. styles.scss
+.blackjack-container {
+    display: flex;
+    width: 100%;
+    height: 100vh; // OBLIGATORIO para ver el juego
+    background-color: #0f111a;
+    color: white;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+
+    // --- SIDEBAR (PANEL IZQUIERDO) ---
+    .sidebar {
+        width: 320px;
+        min-width: 320px;
+        background-color: #13151f;
+        border-right: 1px solid #2d303e;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        z-index: 10;
+
+        h2 { margin: 0; color: #818cf8; text-align: center; }
+
+        .balance-display {
+            background: #1f2937;
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            border: 1px solid #374151;
+            .label { color: #9ca3af; font-size: 0.9rem; }
+            .amount { color: #34d399; font-size: 1.2rem; }
+        }
+
+        // Estilos del Panel de Apuestas
+        .bet-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            
+            label { color: #e5e7eb; font-size: 0.9rem; font-weight: 600; }
+
+            input {
+                padding: 12px;
+                background: #0f111a;
+                border: 1px solid #374151;
+                color: white;
+                border-radius: 8px;
+                text-align: center;
+                font-size: 1.1rem;
+                &:focus { border-color: #6366f1; outline: none; }
+            }
+
+            .chips {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+                button {
+                    background: #374151;
+                    border: 1px solid #4b5563;
+                    color: #d1d5db;
+                    padding: 8px;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    transition: 0.2s;
+                    &:hover { background: #4b5563; color: white; }
+                }
+            }
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            color: white;
+            transition: transform 0.1s;
+            &:active { transform: scale(0.98); }
+
+            &.primary { 
+                background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+                box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+            }
+            &.hit { background: #2563eb; margin-bottom: 10px; }
+            &.stand { background: #dc2626; }
+            &:disabled { opacity: 0.5; cursor: not-allowed; background: #4b5563; box-shadow: none; }
+        }
+        
+        .info-footer { margin-top: auto; text-align: center; color: #6b7280; font-size: 0.8rem; }
+    }
+
+    // --- AREA DE JUEGO 3D ---
+    .game-area {
+        flex-grow: 1;
+        position: relative;
+        background: radial-gradient(circle at center, #163c2e 0%, #064e3b 100%);
+
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+// Dentro de .game-area en styles.scss
+
+.overlay-msg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    // 1. CAMBIO DE FORMA: Cápsula (Pill) en lugar de caja cuadrada
+    border-radius: 50px; 
+    padding: 10px 40px; // Menos altura, más anchura
+    
+    // 2. SOLUCIÓN AL TEXTO VERTICAL: Obligamos a que sea una sola línea
+    white-space: nowrap; 
+
+    // 3. ESTILO SUTIL (Glassmorphism)
+    // Fondo negro muy transparente, solo para dar contraste
+    background: rgba(0, 0, 0, 0.5); 
+    backdrop-filter: blur(4px); // Difumina lo de atrás suavemente
+    
+    // Borde fino dorado (elegante, no tosco)
+    border: 1px solid #fbbf24; 
+    
+    // 4. TIPOGRAFÍA REFINADA
+    color: #fbbf24; // Texto dorado a juego con el borde
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem; // Mucho más pequeño y discreto
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px; // Espaciado elegante entre letras
+
+    // Sombra suave (Glow) en lugar de sombra dura
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
+
+    pointer-events: none;
+    z-index: 100;
+
+    // Animación de entrada suave
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -40%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+    }
+}

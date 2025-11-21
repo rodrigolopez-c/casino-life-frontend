@@ -409,9 +409,10 @@ const DiceCanvas: React.FC<DiceCanvasProps> = ({ rollTriggerRef, resultsRef, onD
           color: '#e9edf6', fontFamily: 'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial'
         }}>
           <div style={{ textAlign: 'center', maxWidth: 520, padding: '24px' }}>
-            <div style={{ fontSize: 36, fontWeight: 800, color: '#fff', marginBottom: 8 }}>Casino Life</div>
+            <div style={{ fontSize: 70, marginBottom: 8 }}>🎲</div>
+            <div style={{ fontSize: 36, fontWeight: 800, color: '#fff', marginBottom: 8 }}>Dices Game!</div>
             <div style={{ fontSize: 18, opacity: 0.85, marginBottom: 24 }}>
-              Dos dados 3D con física realista. Vista cenital, arena cerrada y resultados legibles.
+              Dos dados, cientos de oportunidades!
             </div>
             <button
               onClick={() => {

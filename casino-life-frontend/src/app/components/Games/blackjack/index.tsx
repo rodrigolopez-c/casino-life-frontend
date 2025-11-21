@@ -10,14 +10,23 @@ import { Card3D } from './Card3D';
 import { TableDecor } from './TableDecor'; 
 import { ChipsDecor } from './ChipsDecor';
 
+import ResultModal from '../../shared/ResultModal';
+import type { DiceResult } from '../../shared/types';
+
 const BlackjackGame: React.FC = () => {
     const { balance, setBalance } = useBalance();
+    const [showIntro, setShowIntro] = useState(true);
+    const [gameStarted, setGameStarted] = useState(false);
 
     const [bet, setBet] = useState(10);
     const [deck, setDeck] = useState<CardData[]>([]);
     const [playerHand, setPlayerHand] = useState<CardData[]>([]);
     const [dealerHand, setDealerHand] = useState<CardData[]>([]);
     const [status, setStatus] = useState<GameStatus>('betting');
+    const [showResultModal, setShowResultModal] = useState(false);
+    const [modalWon, setModalWon] = useState(false);
+    const [modalAmount, setModalAmount] = useState(0);
+    const [modalResultText, setModalResultText] = useState('');
     const [msg, setMsg] = useState('');
 
     const startGame = () => {
@@ -40,9 +49,18 @@ const BlackjackGame: React.FC = () => {
         const newHand = [...playerHand, card];
         setPlayerHand(newHand);
         setDeck(newDeck);
+        
         if (calculateScore(newHand) > 21) {
             setMsg('¡Te pasaste!');
             setStatus('gameover');
+            
+            setModalWon(false);
+            setModalAmount(bet);
+            setModalResultText('¡Te pasaste!');
+            
+            setTimeout(() => {
+                setShowResultModal(true);
+            }, 500);
         }
     };
 
@@ -65,13 +83,54 @@ const BlackjackGame: React.FC = () => {
         const pScore = calculateScore(pHand);
         const dScore = calculateScore(dHand);
         let win = 0;
-        if (pScore > 21) { }
-        else if (dScore > 21) { setMsg('Dealer se pasó. ¡Ganas!'); win = bet * 2; }
-        else if (pScore > dScore) { setMsg('¡Ganaste!'); win = natural ? bet * 2.5 : bet * 2; }
-        else if (pScore === dScore) { setMsg('Empate'); win = bet; }
-        else { setMsg('La casa gana'); }
-        if (win > 0) setBalance(b => b + win);
+        let resultText = '';
+        let won = false;
+        
+        if (pScore > 21) { 
+            resultText = '¡Te pasaste!';
+            win = 0;
+            won = false;
+        }
+        else if (dScore > 21) { 
+            resultText = 'Dealer se pasó. ¡Ganas!'; 
+            win = bet * 2;
+            won = true;
+        }
+        else if (pScore > dScore) { 
+            resultText = '¡Ganaste!'; 
+            win = natural ? bet * 2.5 : bet * 2;
+            won = true;
+        }
+        else if (pScore === dScore) { 
+            resultText = 'Empate';
+            win = bet;
+            won = true;
+        }
+        else { 
+            resultText = 'La casa gana';
+            win = 0;
+            won = false;
+        }
+        
+        setModalWon(won);
+        setModalAmount(bet);
+        setModalResultText(resultText);
+        
+        if (win > 0) {
+            setBalance(b => b + win);
+        }
+        
+        setMsg(resultText);
         setStatus('gameover');
+        
+        // Mostrar modal después de un breve delay
+        setTimeout(() => {
+            setShowResultModal(true);
+        }, 500);
+    };
+
+    const handleCloseModal = () => {
+        setShowResultModal(false);
     };
 
     // Loader nulo para evitar parpadeos
@@ -85,21 +144,63 @@ const BlackjackGame: React.FC = () => {
                 {(status === 'betting' || status === 'gameover') ? (
                     <div className="bet-controls">
                         <label>Apuesta:</label>
-                        <input type="number" value={bet} onChange={e => setBet(Number(e.target.value))} />
-                        <div className="chips">{[10, 25, 50, 100].map(val => (<button key={val} onClick={() => setBet(val)}>${val}</button>))}</div>
-                        <button className="action-btn primary" onClick={startGame} disabled={balance < bet || bet <= 0}>{status === 'gameover' ? 'Nueva Partida' : 'Repartir'}</button>
+                        <input type="number" value={bet} onChange={e => setBet(Number(e.target.value))} disabled={!gameStarted} />
+                        <div className="chips">{[10, 25, 50, 100].map(val => (<button key={val} onClick={() => setBet(val)} disabled={!gameStarted}>${val}</button>))}</div>
+                        <button className="action-btn primary" onClick={startGame} disabled={balance < bet || bet <= 0 || !gameStarted}>{status === 'gameover' ? 'Nueva Partida' : 'Repartir'}</button>
                     </div>
                 ) : (
                     <div className="bet-controls">
                         <div className="balance-display" style={{justifyContent: 'center', background:'#374151', border:'none'}}><span style={{color:'white'}}>JUGANDO...</span></div>
-                        <button className="action-btn hit" onClick={hit}>PEDIR CARTA</button>
-                        <button className="action-btn stand" onClick={stand}>PLANTARSE</button>
+                        <button className="action-btn hit" onClick={hit} disabled={!gameStarted}>PEDIR CARTA</button>
+                        <button className="action-btn stand" onClick={stand} disabled={!gameStarted}>PLANTARSE</button>
                     </div>
                 )}
                 <div className="info-footer"><p>Blackjack paga 3 a 2</p></div>
             </div>
 
             <div className="game-area">
+                {/* Pantalla de introducción */}
+                {!gameStarted && (
+                    <div style={{
+                        position: 'absolute',
+                        inset: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: '#111827',
+                        color: '#e9edf6',
+                        fontFamily: 'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
+                        zIndex: 10
+                    }}>
+                        <div style={{ textAlign: 'center', maxWidth: 520, padding: '24px' }}>
+                            <div style={{ fontSize: 48, marginBottom: 16 }}>♠️ ♥️ ♦️ ♣️</div>
+                            <div style={{ fontSize: 36, fontWeight: 800, color: '#fff', marginBottom: 8 }}>Blackjack</div>
+                            <div style={{ fontSize: 18, opacity: 0.85, marginBottom: 24, lineHeight: 1.6 }}>
+                                Acércate a 21 sin pasarte. ¡Blackjack paga 3 a 2!
+                            </div>
+                            <button
+                                onClick={() => setGameStarted(true)}
+                                style={{
+                                    padding: '12px 18px', 
+                                    borderRadius: 12, 
+                                    border: '1px solid rgba(255,255,255,0.15)',
+                                    background: 'linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06))',
+                                    color: '#fff', 
+                                    fontWeight: 700, 
+                                    cursor: 'pointer', 
+                                    backdropFilter: 'blur(6px)',
+                                    fontSize: 16
+                                }}
+                            >
+                                Comenzar
+                            </button>
+                            <div style={{ marginTop: 12, fontSize: 12, opacity: 0.65 }}>
+                                Consejo: El dealer se planta en 17. ¡Buena suerte!
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {msg && <div className="overlay-msg">{msg}</div>}
                 
                 {/* CÁMARA: Usamos tu configuración */}
@@ -169,9 +270,18 @@ const BlackjackGame: React.FC = () => {
                         </group>
                     </Suspense>
                 </Canvas>
+
+                {/* Modal de resultado */}
+                {showResultModal && (
+                    <ResultModal
+                        won={modalWon}
+                        amount={modalAmount}
+                        result={modalResultText}
+                        onClose={handleCloseModal}
+                    />
+                )}
             </div>
         </div>
     );
 };
-
 export default BlackjackGame;

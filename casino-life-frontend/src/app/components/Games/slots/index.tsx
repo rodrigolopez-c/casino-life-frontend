@@ -9,9 +9,20 @@ import './Slots.scss';
 
 export default function SlotsGame() {
   const { balance, setBalance } = useBalance();
+
+  // Balance seguro siempre en número
+  const safeBalance = balance ?? 0;
+
   const [gameStarted, setGameStarted] = useState(false);
   const [isSpinning, setIsSpinning] = useState(false);
-  const [currentBetAmount, setCurrentBetAmount] = useState<number>(0);
+
+  // Apuesta actual
+  const [currentBetAmount, setCurrentBetAmount] = useState<number>(10);
+
+  // Última apuesta para mostrar en el modal
+  const [lastBet, setLastBet] = useState<number>(10);
+
+  // Resultados de la tirada
   const [showResultModal, setShowResultModal] = useState(false);
   const [lastWin, setLastWin] = useState(false);
   const [lastPayout, setLastPayout] = useState(0);
@@ -19,71 +30,76 @@ export default function SlotsGame() {
 
   const spinTriggerRef = useRef<(() => void) | null>(null);
 
+  // Cambiar apuesta
   const handlePlaceBet = (amount: number) => {
-    // Solo actualiza la apuesta seleccionada
-    if (amount > balance) return;
+    if (amount > safeBalance) return;
     setCurrentBetAmount(amount);
   };
 
-
+  // Cuando termina el spin
   const handleSpinEnd = async (result: SlotsResult) => {
-    const bet = currentBetAmount ?? 0;
-    const won = result.multiplier > 0;
-    const gross = won ? bet * result.multiplier : 0;
+  const bet = currentBetAmount;     // usar apuesta ACTUAL correcta
+  const won = result.multiplier > 0;
+  const gross = won ? bet * result.multiplier : 0;
 
-    // ✔ RESULTADO FINAL AQUÍ
-    setLastSymbols(result.symbols);  
+  setLastSymbols(result.symbols);
+  setLastWin(won);
+  setLastPayout(gross);
+  setShowResultModal(true);
+  setIsSpinning(false);
 
-    setLastWin(won);
-    setLastPayout(gross);
-    setShowResultModal(true);
-    setIsSpinning(false);
+  try {
+    const response = await updateCoins(
+      "slots",
+      won ? "win" : "lost",
+      won ? gross : -bet     // payout correcto
+    );
+    setBalance(response.newBalance);
+  } catch (err) {
+    console.error("Error updating coins:", err);
+  }
+};
 
-    try {
-      const response = await updateCoins(
-        "slots",
-        won ? "win" : "lost",
-        Math.abs(won ? gross - bet : -bet)
-      );
-      setBalance(response.newBalance);
-    } catch (err) {
-      console.error("Error updating coins:", err);
-    }
-  };
 
+  // Mensaje debajo de la máquina
   const getBetMessage = () => `Apuesta $${currentBetAmount}`;
 
+  // Cerrar modal
   const handleCloseModal = () => {
     setShowResultModal(false);
-    setCurrentBetAmount(0);
     setLastSymbols(null);
   };
 
+  // Cuando el usuario jala la palanca
   const handleLeverPull = () => {
-  const bet = currentBetAmount ?? 10; // default
+    const bet = currentBetAmount;
 
-  if (bet > balance) {
-    console.warn("No hay suficiente balance");
-    return;
-  }
+    if (safeBalance <= 0 || bet > safeBalance) {
+      console.warn("No hay suficiente balance");
+      return;
+    }
 
-  if (!spinTriggerRef.current) return;
+    if (!spinTriggerRef.current) return;
 
-  // descontar apuesta
-  setBalance(prev => prev - bet);
+    // Guardamos la apuesta para mostrarla en el modal
+    setLastBet(bet);
 
-  // iniciar animación
-  setIsSpinning(true);
-  spinTriggerRef.current();
-};
+    // Descontamos la apuesta
+    setBalance(prev => (prev ?? 0) - bet);
+
+    // Inicia animación
+    setIsSpinning(true);
+    spinTriggerRef.current();
+  };
 
   return (
     <div className="slots-root">
+      
       <div className="slots-left">
         <SlotsBettingPanel
-        balance={balance}
-        onPlaceBet={handlePlaceBet}
-        disabled={isSpinning || !gameStarted}
+          balance={safeBalance}
+          onPlaceBet={handlePlaceBet}
+          disabled={isSpinning || !gameStarted || safeBalance < 10}
         />
       </div>
 
@@ -91,24 +107,21 @@ export default function SlotsGame() {
         <SlotsCanvas
           spinTriggerRef={spinTriggerRef}
           onSpinEnd={handleSpinEnd}
-          canPlay={gameStarted}
+          canPlay={gameStarted && safeBalance >= 10}
           onGameStart={() => setGameStarted(true)}
           currentBetMessage={getBetMessage()}
           onLeverPull={handleLeverPull}
         />
-
       </div>
 
       {showResultModal && (
-          <ResultModal
-              won={lastWin}
-              amount={lastPayout}
-              result={lastSymbols?.join(' — ') ?? ''}
-              onClose={handleCloseModal}
-          />
+        <ResultModal
+          won={lastWin}
+          amount={lastWin ? lastPayout : lastBet} 
+          result={lastSymbols?.join(' — ') ?? ''}
+          onClose={handleCloseModal}
+        />
       )}
-
-
     </div>
   );
 }

@@ -1,38 +1,41 @@
-// src/app/contexts/BalanceContext.tsx
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import { getMyProfile } from "@/api/profile";
 
 type BalanceContextType = {
-  balance: number;
-  setBalance: React.Dispatch<React.SetStateAction<number>>;
+  balance: number | null;
+  setBalance: React.Dispatch<React.SetStateAction<number | null>>;
   loading: boolean;
+  refreshBalance: () => Promise<void>;
 };
 
 const BalanceContext = createContext<BalanceContextType | undefined>(undefined);
 
 export const BalanceProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [balance, setBalance] = useState<number>(0);
+  const [balance, setBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔥 Cargar balance REAL desde el backend
-  useEffect(() => {
-    async function fetchBalance() {
-      try {
-        const res = await getMyProfile(); // ← endpoint /api/profile/me
-        setBalance(res.user.coins);
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-      } finally {
-        setLoading(false);
-      }
+  // ←–––––––––––––––––––––––––––
+  // 🔥 FUNCIÓN GLOBAL PARA RECARGAR EL BALANCE
+  // ––––––––––––––––––––––––––––→
+  const refreshBalance = async () => {
+    try {
+      const res = await getMyProfile();
+      setBalance(res.user.coins);
+    } catch (err) {
+      console.error("Error fetching balance:", err);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    fetchBalance();
+  // Cargar balance al montar el provider
+  useEffect(() => {
+    refreshBalance();
   }, []);
 
   return (
-    <BalanceContext.Provider value={{ balance, setBalance, loading }}>
+    <BalanceContext.Provider value={{ balance, setBalance, loading, refreshBalance }}>
       {children}
     </BalanceContext.Provider>
   );

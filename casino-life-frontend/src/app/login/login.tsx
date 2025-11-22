@@ -5,11 +5,13 @@ import TermsText from "../components/login/TermsText/TermsText";
 import LoginTextInput from "../components/login/LoginTextInput/LoginTextInput";
 import { useAuth } from "../contexts/AuthContext";
 import "./login.scss";
+import { useBalance } from "../contexts/BalanceContext";
 
 export default function Login() {
   const [emailStep, setEmailStep] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
   const [formLoading, setFormLoading] = useState(false); // 👈 renombrado
+  const { refreshBalance } = useBalance();
 
   const { loginUser, registerUser, user, loading: authLoading } = useAuth(); // 👈 todo de useAuth()
   const navigate = useNavigate();
@@ -30,6 +32,9 @@ export default function Login() {
       } else {
         await loginUser(email, password);
       }
+
+      await refreshBalance();
+      
       navigate("/board/games");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {

@@ -3,7 +3,17 @@ import { usePage } from "../../contexts/BoardNavigation";
 import { getMyProfile, type UserProfile } from "@/api/profile";
 
 // Lucide icons
-import { User, Mail, Coins, CalendarDays, Gamepad2, Clock, TrendingUp, TrendingDown } from "lucide-react";
+import {
+  User,
+  Mail,
+  Coins,
+  CalendarDays,
+  Gamepad2,
+  Clock,
+  TrendingUp,
+  TrendingDown,
+  LogOut,
+} from "lucide-react";
 
 export default function ProfileBoard() {
   const { setCurrentPage } = usePage();
@@ -26,20 +36,17 @@ export default function ProfileBoard() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.reload();
+  };
+
   if (loading) {
-    return (
-      <div style={{ padding: "2rem", color: "white" }}>
-        Cargando perfil...
-      </div>
-    );
+    return <div style={{ padding: "2rem", color: "white" }}>Cargando perfil...</div>;
   }
 
   if (!profile) {
-    return (
-      <div style={{ padding: "2rem", color: "white" }}>
-        Error cargando perfil
-      </div>
-    );
+    return <div style={{ padding: "2rem", color: "white" }}>Error cargando perfil</div>;
   }
 
   const { user, history } = profile;
@@ -59,8 +66,34 @@ export default function ProfileBoard() {
         backdropFilter: "blur(10px)",
         border: "1px solid rgba(255,255,255,0.05)",
         boxShadow: "0 0 20px rgba(0,0,0,0.5)",
+        position: "relative",
       }}
     >
+      {/* 🔐 LOGOUT BUTTON */}
+      <button
+        onClick={handleLogout}
+        style={{
+          position: "absolute",
+          right: "20px",
+          top: "20px",
+          padding: "8px 14px",
+          background: "rgba(239,68,68,0.15)",
+          border: "1px solid rgba(239,68,68,0.4)",
+          borderRadius: "8px",
+          color: "#ef4444",
+          fontWeight: 600,
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+          cursor: "pointer",
+          backdropFilter: "blur(4px)",
+          transition: "0.2s",
+        }}
+      >
+        <LogOut size={18} />
+        Logout
+      </button>
+
       {/* HEADER */}
       <h2
         style={{
@@ -113,7 +146,6 @@ export default function ProfileBoard() {
                   fontSize: "1.8rem",
                   fontWeight: 700,
                   color: "#34d399",
-                  textShadow: "0 0 8px rgba(52,211,153,0.3)",
                 }}
               >
                 ${user.coins}
@@ -221,7 +253,15 @@ export default function ProfileBoard() {
               </p>
 
               {/* DATE */}
-              <p style={{ fontSize: ".9rem", opacity: 0.6, display: "flex", alignItems: "center", gap: "6px" }}>
+              <p
+                style={{
+                  fontSize: ".9rem",
+                  opacity: 0.6,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
                 <Clock size={16} opacity={0.6} />
                 {new Date(record.createdAt).toLocaleString()}
               </p>

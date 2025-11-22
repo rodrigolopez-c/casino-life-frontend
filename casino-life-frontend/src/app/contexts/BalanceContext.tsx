@@ -12,7 +12,7 @@ type BalanceContextType = {
 const BalanceContext = createContext<BalanceContextType | undefined>(undefined);
 
 export const BalanceProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [balance, setBalance] = useState<number>(0);
+  const [balance, setBalance] = useState<number>(100);
   const [loading, setLoading] = useState(true);
 
   // 🔥 Cargar balance REAL desde el backend
@@ -38,6 +38,7 @@ export const BalanceProvider: React.FC<{ children: ReactNode }> = ({ children })
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useBalance = (): BalanceContextType => {
   const context = useContext(BalanceContext);
   if (!context) {

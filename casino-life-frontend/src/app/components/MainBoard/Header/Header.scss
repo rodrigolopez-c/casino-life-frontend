@@ -68,3 +68,69 @@ header{
     }
   }
 }
+/* --- Botón “+” --- */
+.AddCoinsBtn {
+  margin-left: 0.8rem;
+  background: #fbbf24;
+  color: #000;
+  font-weight: bold;
+  font-size: 1.2rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.AddCoinsBtn:hover {
+  background: #fcd34d;
+}
+
+/* --- Modal Overlay --- */
+.CoinsModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* --- Modal Window --- */
+.CoinsModal {
+  background: #111827;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 300px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 0 25px rgba(0,0,0,0.5);
+  color: white;
+}
+
+.CoinsModal h2 {
+  margin-bottom: 0.6rem;
+  font-size: 1.4rem;
+}
+
+.WatchAdBtn {
+  width: 100%;
+  background: #10b981;
+  padding: 0.8rem;
+  margin-top: 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+
+.CloseModalBtn {
+  margin-top: 0.8rem;
+  background: transparent;
+  border: none;
+  color: #d1d5db;
+  cursor: pointer;
+  font-size: 0.9rem;
+}

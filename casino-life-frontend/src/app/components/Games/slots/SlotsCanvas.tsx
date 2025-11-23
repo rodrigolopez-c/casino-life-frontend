@@ -1,4 +1,3 @@
-// SlotsCanvas.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import './Slots.scss';
 
@@ -13,7 +12,7 @@ interface SlotsCanvasProps {
   canPlay: boolean;
   onGameStart: () => void;
   currentBetMessage: string;
-  onLeverPull: () => void; // <-- agregado: la palanca llamará al padre
+  onLeverPull: () => void;
 }
 
 const SYMBOLS = ['🍒', '🍋', '🔔', '⭐', '7️⃣', '🍊'];
@@ -35,7 +34,6 @@ const SlotsCanvas: React.FC<SlotsCanvasProps> = ({
   onLeverPull
 }) => {
   const [phase, setPhase] = useState<'intro' | 'machine'>('intro');
-
   const [reelValues, setReelValues] = useState<string[]>([
     SYMBOLS[0],
     SYMBOLS[1],
@@ -47,11 +45,75 @@ const SlotsCanvas: React.FC<SlotsCanvasProps> = ({
   const spinningRef = useRef(false);
   const reelsInterval = useRef<Array<number | null>>([null, null, null]);
 
-  // Exponer spin() al padre a través del ref
+  // ref que siempre apunta a la última implementación de `spin`
+  const spinRef = useRef<() => void>(() => {});
+
+  // función actual de spin (se redefine cada render)
+  const spin = () => {
+    if (!canPlay || spinningRef.current) return;
+
+    spinningRef.current = true;
+    setHighlight([false, false, false]);
+
+    const local = [...reelValues];
+
+    for (let i = 0; i < 3; i++) {
+      reelsInterval.current[i] = window.setInterval(() => {
+        local[i] = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+        setReelValues([...local]);
+      }, 65);
+    }
+
+    const delays = [1200, 1700, 2200];
+    const final: string[] = [];
+
+    delays.forEach((delay, idx) => {
+      setTimeout(() => {
+        const id = reelsInterval.current[idx];
+        if (id) {
+          clearInterval(id);
+          reelsInterval.current[idx] = null;
+        }
+
+        const last = local[idx];
+        final[idx] = last;
+
+        setReelValues(prev => {
+          const copy = [...prev];
+          copy[idx] = last;
+          return copy;
+        });
+
+        setHighlight(h => {
+          const c = [...h];
+          c[idx] = true;
+          return c;
+        });
+
+        if (idx === 2) {
+          // terminado
+          spinningRef.current = false;
+          const multiplier = evaluatePayout(final);
+
+          // pequeña espera para UX
+          setTimeout(() => {
+            onSpinEnd({ symbols: final, multiplier });
+          }, 300);
+        }
+      }, delay);
+    });
+  };
+
+  // siempre mantener spinRef actualizado a la última función spin
+  useEffect(() => {
+    spinRef.current = spin;
+  }, [spin, canPlay, reelValues]);
+
+  // Exponer una función estable en spinTriggerRef que llame a la versión actualada
   useEffect(() => {
     spinTriggerRef.current = () => {
-      if (spinningRef.current) return;
-      spin();
+      // invoca la implementación de spin más reciente
+      if (spinRef.current) spinRef.current();
     };
     return () => {
       spinTriggerRef.current = null;
@@ -66,71 +128,10 @@ const SlotsCanvas: React.FC<SlotsCanvasProps> = ({
     };
   }, []);
 
-  const spin = () => {
-    if (!canPlay) return;
-
-    spinningRef.current = true;
-    setHighlight([false, false, false]);
-
-    const localValues = [...reelValues];
-
-    // Girar 3 reels
-    for (let i = 0; i < 3; i++) {
-      reelsInterval.current[i] = window.setInterval(() => {
-        localValues[i] = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-        setReelValues([...localValues]);
-      }, 65);
-    }
-
-    const stopDelays = [1200, 1700, 2200];
-    const finalResult: string[] = [];
-
-    stopDelays.forEach((delay, idx) => {
-      setTimeout(() => {
-        const id = reelsInterval.current[idx];
-        if (id) {
-          window.clearInterval(id);
-          reelsInterval.current[idx] = null;
-        }
-
-        // símbolo final mostrado (último que quedó en la animación)
-        const finalSym = localValues[idx];
-        finalResult[idx] = finalSym;
-
-        setReelValues(prev => {
-          const copy = [...prev];
-          copy[idx] = finalSym;
-          return copy;
-        });
-
-        // destacar reel detenido
-        setHighlight(prev => {
-          const copy = [...prev];
-          copy[idx] = true;
-          return copy;
-        });
-
-        // último reel → terminar
-        if (idx === 2) {
-          spinningRef.current = false;
-          const multiplier = evaluatePayout(finalResult);
-          setTimeout(() => {
-            onSpinEnd({ symbols: finalResult, multiplier });
-          }, 300);
-        }
-      }, delay);
-    });
-  };
-
   const evaluatePayout = (symbols: string[]): number => {
     const [a, b, c] = symbols;
-
-    if (a === b && b === c) {
-      return a === '7️⃣' ? 50 : 10;
-    }
-
+    if (a === b && b === c) return a === '7️⃣' ? 50 : 10;
     if (a === b || b === c || a === c) return 2;
-
     return 0;
   };
 
@@ -140,7 +141,6 @@ const SlotsCanvas: React.FC<SlotsCanvasProps> = ({
         <div className="slots-intro">
           <div className="intro-icon">🎰</div>
           <div className="intro-title">Slots Machine</div>
-          <div className="intro-subtitle">Tres rodillos — efectos brillantes — buena suerte 🍀</div>
 
           <button
             className="intro-btn"
@@ -156,7 +156,6 @@ const SlotsCanvas: React.FC<SlotsCanvasProps> = ({
 
       {phase === 'machine' && (
         <div className="slot-machine">
-          {/* Marco */}
           <div className="machine-frame">
             <div className="reels">
               <Reel value={reelValues[0]} highlight={highlight[0]} />
@@ -166,11 +165,10 @@ const SlotsCanvas: React.FC<SlotsCanvasProps> = ({
             <div className="payline" />
           </div>
 
-          {/* Palanca — ahora llama al padre para gestionar la apuesta y el spin */}
+          {/* Palanca */}
           <div
             className={`lever ${spinningRef.current ? 'lever-pulled' : ''}`}
             onClick={() => {
-              // sólo delegamos la acción al padre (maneja descuento y luego dispara el ref)
               if (!spinningRef.current) onLeverPull();
             }}
           >
@@ -178,7 +176,6 @@ const SlotsCanvas: React.FC<SlotsCanvasProps> = ({
             <div className="lever-stick"></div>
           </div>
 
-          {/* Bet message */}
           <div className="bet-info">{currentBetMessage}</div>
         </div>
       )}

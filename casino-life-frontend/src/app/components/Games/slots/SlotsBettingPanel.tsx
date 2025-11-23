@@ -4,7 +4,7 @@ import './SlotsBettingPanel.scss';
 interface SlotsBettingPanelProps {
   balance: number;
   onPlaceBet: (amount: number) => void;
-  disabled: boolean; // se bloquea si está girando o si el juego no ha iniciado
+  disabled: boolean;
 }
 
 const SlotsBettingPanel: React.FC<SlotsBettingPanelProps> = ({
@@ -13,17 +13,14 @@ const SlotsBettingPanel: React.FC<SlotsBettingPanelProps> = ({
   disabled
 }) => {
   const [betAmount, setBetAmount] = useState<number>(10);
-
   const quicks = [10, 25, 50, 100];
 
-  // Si el balance cambia y es menor a la apuesta actual, ajustamos automáticamente
   useEffect(() => {
     if (balance <= 0) {
       setBetAmount(0);
       onPlaceBet(0);
       return;
     }
-
     if (betAmount > balance) {
       const newBet = Math.min(10, balance);
       setBetAmount(newBet);
@@ -33,12 +30,9 @@ const SlotsBettingPanel: React.FC<SlotsBettingPanelProps> = ({
 
   const updateBet = (value: number) => {
     if (value > balance) return;
-
     setBetAmount(value);
     onPlaceBet(value);
   };
-
-  const fullyDisabled = disabled || balance <= 0;
 
   return (
     <div className="slots-betting-panel">
@@ -56,24 +50,16 @@ const SlotsBettingPanel: React.FC<SlotsBettingPanelProps> = ({
               key={q}
               className="quick-amount"
               onClick={() => updateBet(q)}
-              disabled={q > balance || fullyDisabled}
+              disabled={disabled || q > balance}
             >
               ${q}
             </button>
           ))}
         </div>
 
-        {balance <= 0 && (
-          <div className="helper error">
-            No tienes suficiente balance para apostar.
-          </div>
-        )}
-
-        {balance > 0 && (
-          <div className="helper">
-            Selecciona cuánto quieres apostar y usa la palanca para girar
-          </div>
-        )}
+        <div className="helper">
+          Selecciona tu apuesta y jala la palanca
+        </div>
       </div>
     </div>
   );

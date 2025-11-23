@@ -14,10 +14,9 @@ const LeverSpinButton: React.FC<LeverSpinButtonProps> = ({ disabled, onSpin }) =
 
     setAnimating(true);
 
-    // Duración de la animación
     setTimeout(() => {
       setAnimating(false);
-      onSpin(); // dispara el spin real
+      onSpin();
     }, 600);
   };
 

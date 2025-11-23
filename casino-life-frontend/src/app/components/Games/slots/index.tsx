@@ -50,7 +50,7 @@ export default function SlotsGame() {
       await updateCoins(
         "slots",
         won ? "win" : "lost",
-        won ? grossWin : -bet   // <— REGISTRO COHERENTE
+        won ? grossWin : -bet
       );
     } catch (err) {
       console.error("Error updating coins:", err);

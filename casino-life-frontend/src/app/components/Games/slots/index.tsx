@@ -35,7 +35,7 @@ export default function SlotsGame() {
 
     const grossWin = won ? bet * result.multiplier : 0;
 
-    // --- ACTUALIZA BALANCE SOLO AQUÍ ---
+    // actualizar balance real del jugador
     if (won) {
       setBalance(prev => (prev ?? 0) + grossWin);
     }
@@ -46,17 +46,17 @@ export default function SlotsGame() {
     setShowResultModal(true);
     setIsSpinning(false);
 
-    // Solo registrar en backend, SIN modificar balance
     try {
       await updateCoins(
         "slots",
         won ? "win" : "lost",
-        won ? grossWin : bet
+        won ? grossWin : -bet   // <— REGISTRO COHERENTE
       );
     } catch (err) {
       console.error("Error updating coins:", err);
     }
   };
+
 
   const handleCloseModal = () => {
     setShowResultModal(false);

@@ -9,7 +9,6 @@ import './Slots.scss';
 
 export default function SlotsGame() {
   const { balance, setBalance } = useBalance();
-
   const safeBalance = balance ?? 0;
 
   const [gameStarted, setGameStarted] = useState(false);
@@ -25,31 +24,35 @@ export default function SlotsGame() {
 
   const spinTriggerRef = useRef<(() => void) | null>(null);
 
-  // Cambiar apuesta
   const handlePlaceBet = (amount: number) => {
     if (amount > safeBalance) return;
     setCurrentBetAmount(amount);
   };
 
-  // Fin del spin
   const handleSpinEnd = async (result: SlotsResult) => {
     const bet = lastBet;
     const won = result.multiplier > 0;
-    const gross = won ? bet * result.multiplier : 0;
+
+    const grossWin = won ? bet * result.multiplier : 0;
+
+    // --- ACTUALIZA BALANCE SOLO AQUÍ ---
+    if (won) {
+      setBalance(prev => (prev ?? 0) + grossWin);
+    }
 
     setLastSymbols(result.symbols);
     setLastWin(won);
-    setLastPayout(gross);
+    setLastPayout(grossWin);
     setShowResultModal(true);
     setIsSpinning(false);
 
+    // Solo registrar en backend, SIN modificar balance
     try {
-      const response = await updateCoins(
+      await updateCoins(
         "slots",
         won ? "win" : "lost",
-        won ? gross : 0
+        won ? grossWin : bet
       );
-      setBalance(response.newBalance);
     } catch (err) {
       console.error("Error updating coins:", err);
     }
@@ -60,24 +63,18 @@ export default function SlotsGame() {
     setLastSymbols(null);
   };
 
-  // Cuando jala la palanca
   const handleLeverPull = () => {
     const bet = currentBetAmount;
 
-    if (safeBalance < bet) {
-      console.warn("No hay suficiente balance");
-      return;
-    }
+    if (safeBalance < bet) return;
     if (!spinTriggerRef.current) return;
 
     setLastBet(bet);
 
-    // Descontar dinero
+    // --- DESCONTAR SOLO UNA VEZ ---
     setBalance(prev => (prev ?? 0) - bet);
 
     setIsSpinning(true);
-
-    // Activar giro real
     spinTriggerRef.current();
   };
 

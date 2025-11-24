@@ -9,4 +9,10 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'), // 👈 ahora puedes usar "@/..."
     },
   },
+  build: {
+    rollupOptions: {
+      // Fuerza a NO usar el módulo nativo roto
+      external: [],
+    },
+  },
 })

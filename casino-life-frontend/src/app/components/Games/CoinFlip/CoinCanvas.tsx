@@ -115,16 +115,11 @@ const CoinCanvas: React.FC<CoinCanvasProps> = ({
             ctx.arc(256, 256, 248, 0, Math.PI * 2);
             ctx.stroke();
 
-            // Texto "CARA"
-            ctx.fillStyle = '#000000';
-            ctx.font = 'bold 80px Arial';
+            // Emoji moneda CENTRADO Y GRANDE
+            ctx.font = '280px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText('CARA', 256, 180);
-
-            // Emoji corona
-            ctx.font = '120px Arial';
-            ctx.fillText('👑', 256, 320);
+            ctx.fillText('🪙', 256, 256);
 
             const texture = new THREE.CanvasTexture(canvas);
             texture.needsUpdate = true;
@@ -133,39 +128,34 @@ const CoinCanvas: React.FC<CoinCanvasProps> = ({
 
         // Función para crear la textura de "Cruz"
         const createTailsTexture = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = canvas.height = 512;
-        const ctx = canvas.getContext('2d')!;
+            const canvas = document.createElement('canvas');
+            canvas.width = canvas.height = 512;
+            const ctx = canvas.getContext('2d')!;
 
-        // Fondo plateado
-        const gradient = ctx.createRadialGradient(256, 256, 50, 256, 256, 256);
-        gradient.addColorStop(0, '#c0c0c0');
-        gradient.addColorStop(0.7, '#e8e8e8');
-        gradient.addColorStop(1, '#a8a8a8');
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.arc(256, 256, 256, 0, Math.PI * 2);
-        ctx.fill();
+            // Fondo plateado
+            const gradient = ctx.createRadialGradient(256, 256, 50, 256, 256, 256);
+            gradient.addColorStop(0, '#c0c0c0');
+            gradient.addColorStop(0.7, '#e8e8e8');
+            gradient.addColorStop(1, '#a8a8a8');
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(256, 256, 256, 0, Math.PI * 2);
+            ctx.fill();
 
-        // Borde
-        ctx.strokeStyle = '#505050';
-        ctx.lineWidth = 8;
-        ctx.beginPath();
-        ctx.arc(256, 256, 248, 0, Math.PI * 2);
-        ctx.stroke();
+            // Borde
+            ctx.strokeStyle = '#505050';
+            ctx.lineWidth = 8;
+            ctx.beginPath();
+            ctx.arc(256, 256, 248, 0, Math.PI * 2);
+            ctx.stroke();
 
-        // Texto "CRUZ"
-        ctx.fillStyle = '#000000';
-        ctx.font = 'bold 80px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('CRUZ', 256, 180);
+            // Emoji espadas CENTRADO Y GRANDE
+            ctx.font = '280px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('⚔️', 256, 256);
 
-        // Emoji espadas
-        ctx.font = '120px Arial';
-        ctx.fillText('⚔️', 256, 320);
-
-        const texture = new THREE.CanvasTexture(canvas);
+            const texture = new THREE.CanvasTexture(canvas);
             texture.needsUpdate = true;
             return texture;
         };
@@ -411,13 +401,14 @@ const CoinCanvas: React.FC<CoinCanvasProps> = ({
             <div style={{
                 position: 'absolute', inset: 0, display: 'grid', placeItems: 'center',
                 background: 'radial-gradient(1200px 800px at 50% 30%, rgba(255,215,0,0.08), rgba(10,14,26,1))',
-                color: '#e9edf6', fontFamily: 'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial'
+                color: '#e9edf6', fontFamily: 'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
+                zIndex: 100  // AGREGA ESTO
             }}>
             <div style={{ textAlign: 'center', maxWidth: 520, padding: '24px' }}>
                 <div style={{ fontSize: 48, marginBottom: 16 }}>🪙</div>
                 <div style={{ fontSize: 36, fontWeight: 800, color: '#fff', marginBottom: 8 }}>Coin Flip</div>
                 <div style={{ fontSize: 18, opacity: 0.85, marginBottom: 24 }}>
-                Lanza la moneda y apuesta por Cara o Cruz. Física realista 3D con resultados justos.
+                Lanza la moneda y apuesta por Cara o Cruz.
                 </div>
                 <button
                 onClick={() => {
@@ -455,7 +446,7 @@ const CoinCanvas: React.FC<CoinCanvasProps> = ({
                     fontFamily: 'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
                     fontWeight: 700, fontSize: '18px'
                 }}>
-                <b style={{ color: '#fff' }}>Resultado:</b> {result ? (result === 'heads' ? '👑 Cara' : '⚔️ Cruz') : '—'}
+                <b style={{ color: '#fff' }}>Resultado:</b> {result ? (result === 'heads' ? '🪙 Cara' : '⚔️ Cruz') : '—'}
                 </div>
             </div>
 

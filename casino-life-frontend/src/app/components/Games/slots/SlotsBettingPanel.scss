@@ -1,0 +1,97 @@
+/* SlotsBettingPanel.scss - estilos para el panel de apuestas */
+
+.slots-betting-panel {
+  width: 320px;
+  padding: 14px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));
+  border: 1px solid rgba(255,255,255,0.04);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  color: #e9edf6;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Balance */
+.balance {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+}
+
+.balance .amount {
+  color: #fff;
+}
+
+/* input monto */
+.bet-amount {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bet-amount input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: transparent;
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
+}
+
+.quick-amounts {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.quick-amount {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  background: #ffffff;
+  color: #000000;
+  font-weight: 700;
+  transition: 0.15s ease-in-out;
+}
+
+.quick-amount:hover {
+  background: #f2f2f2;
+}
+
+.quick-amount:disabled {
+  background: #bbbbbb;
+  cursor: not-allowed;
+}
+
+
+/* place bet */
+.place-bet-btn {
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(0,0,0,0.06));
+  color: #fff;
+}
+
+.place-bet-btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* small helper text */
+.helper {
+  font-size: 12px;
+  opacity: 0.75;
+}

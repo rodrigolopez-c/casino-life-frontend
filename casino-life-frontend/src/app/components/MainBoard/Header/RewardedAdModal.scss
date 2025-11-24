@@ -1,0 +1,46 @@
+.AdOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.AdContent {
+  background: #020617;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: min(90vw, 500px);
+  color: #f9fafb;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  text-align: center;
+}
+
+.AdVideo {
+  width: 100%;
+  border-radius: 10px;
+  margin: 1rem 0;
+  background: #000;
+}
+
+.AdNote {
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+.CloseBtn {
+  margin-top: 0.75rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  border: none;
+  background: #111827;
+  color: #e5e7eb;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.CloseBtn:hover {
+  background: #1f2937;
+}

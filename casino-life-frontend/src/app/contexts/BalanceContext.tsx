@@ -12,6 +12,7 @@ type BalanceContextType = {
 const BalanceContext = createContext<BalanceContextType | undefined>(undefined);
 
 export const BalanceProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+
   const [balance, setBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -41,6 +42,7 @@ export const BalanceProvider: React.FC<{ children: ReactNode }> = ({ children })
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useBalance = (): BalanceContextType => {
   const context = useContext(BalanceContext);
   if (!context) {

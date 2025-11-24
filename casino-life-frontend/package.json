@@ -6,6 +6,10 @@
   "bin": {
     "casino": "./tools/cli/create-game.ts"
   },
+  "pnpm": {},
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "0.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

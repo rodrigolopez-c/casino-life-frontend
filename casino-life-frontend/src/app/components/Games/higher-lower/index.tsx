@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Text, Html, Loader } from "@react-three/drei";
-import "./styles.scss"; // Usaremos los mismos estilos base
+import "./styles.scss";
+import ResultModal from '../../shared/ResultModal';
 
 import { useBalance } from "../../../contexts/BalanceContext";
 import { type CardData } from "../blackjack/types";
@@ -10,6 +11,8 @@ import { Scene } from "./scene";
 import { updateCoins } from "@/api/coins";
 
 const HigherLowerGame: React.FC = () => {
+  const [showIntro, setShowIntro] = useState(true);
+  const [showResultModal, setShowResultModal] = useState(false);
   const { balance, setBalance } = useBalance();
 
   const [bet, setBet] = useState(10);
@@ -17,6 +20,7 @@ const HigherLowerGame: React.FC = () => {
   const [currentCard, setCurrentCard] = useState<CardData | null>(null);
   const [history, setHistory] = useState<CardData[]>([]);
   const [animKey, setAnimKey] = useState(0);
+  
 
   // Estado de la racha
   const [winnings, setWinnings] = useState(0);
@@ -28,12 +32,14 @@ const HigherLowerGame: React.FC = () => {
     : { higher: 0, lower: 0, probHigher: 0, probLower: 0 };
 
   const startGame = async () => {
-    if (bet > balance || bet <= 0) return;
+    // Protección contra balance null
+    if (balance === null || bet > balance || bet <= 0) return;
+    setShowIntro(false);
 
-    // 🔥 RESTAR apuesta
-    setBalance((b) => Math.floor(b - bet));
+    // RESTAR apuesta
+    setBalance((b) => Math.floor((b ?? 0) - bet));
 
-    // 🔥 BACKEND: registrar la pérdida inicial
+    // BACKEND: registrar la pérdida inicial
     try {
       await updateCoins("higher-lower", "lost", Math.floor(bet));
     } catch (e) {
@@ -82,28 +88,45 @@ const HigherLowerGame: React.FC = () => {
   };
 
   const cashOut = async () => {
-    const profit = winnings;  // incluye apuesta inicial multiplicada
+    const profit = winnings;
 
-    setBalance(b => Math.floor(b + profit));
+    setBalance(b => Math.floor((b ?? 0) + profit));
 
-    // 🔥 BACKEND: registrar ganancia
     try {
-       await updateCoins("higher-lower", "win", Math.floor(profit));
+      await updateCoins("higher-lower", "win", Math.floor(profit));
     } catch (e) {
-        console.error("Error updateCoins cashout:", e);
+      console.error("Error updateCoins cashout:", e);
     }
 
     setMsg(`¡Retiraste $${profit.toFixed(2)}!`);
     setIsPlaying(false);
+    
+    // Mostrar modal en lugar de solo mensaje
+    setShowResultModal(true);
     setCurrentCard(null);
-};
+  };
 
   const gameOver = (win: boolean) => {
     if (!win) setMsg("Fallaste. La casa gana.");
-    // ❗ NO se hace nada al balance (ya se cobró la apuesta)
     setIsPlaying(false);
     setWinnings(0);
+    
+    // Mostrar modal de pérdida
+    if (!win) {
+        setTimeout(() => {
+            setShowResultModal(true);
+        }, 500);
+    }
   };
+
+  const handleCloseModal = () => {
+    setShowResultModal(false);
+    setCurrentCard(null);
+    setHistory([]);
+  };
+
+  // Valor seguro para mostrar el balance
+  const safeBalance = balance ?? 0;
 
   return (
     <div className="blackjack-container">
@@ -113,7 +136,7 @@ const HigherLowerGame: React.FC = () => {
         <h2 style={{ color: "#fcd34d" }}>▲ HIGHER LOWER ▼</h2>
         <div className="balance-display">
           <span className="label">Balance</span>
-          <span className="amount">${balance.toFixed(2)}</span>
+          <span className="amount">${safeBalance.toFixed(2)}</span>
         </div>
 
         {!isPlaying ? (
@@ -135,7 +158,7 @@ const HigherLowerGame: React.FC = () => {
             <button
               className="action-btn primary"
               onClick={startGame}
-              disabled={balance < bet || bet <= 0}
+              disabled={balance === null || safeBalance < bet || bet <= 0}
             >
               COMENZAR JUEGO
             </button>
@@ -217,10 +240,29 @@ const HigherLowerGame: React.FC = () => {
             "radial-gradient(circle at center, #1e1b4b 0%, #020617 100%)",
         }}
       >
-        {/* Fondo Azul Oscuro/Morado para diferenciar del Blackjack */}
+        {showIntro && (
+            <div className="intro-overlay">
+                <div className="intro-content">
+                    <div className="intro-icon">⬆️⬇️</div>
+                    <div className="intro-title">Higher or Lower</div>
+                    <div className="intro-description">
+                        High o Low? Alta o baja? Esa es la cuestión... ¡Acumula multiplicadores y retírate cuando quieras!
+                    </div>
+                    <button
+                        className="intro-start-btn"
+                        onClick={() => setShowIntro(false)}
+                    >
+                        Comenzar
+                    </button>
+                    <div className="intro-help">
+                        El As vale 14. Empate pierde.
+                    </div>
+                </div>
+            </div>
+        )}
 
         <div className="overlay-msg" style={{ top: "15%" }}>
-          {msg}
+            {msg}
         </div>
 
         <Canvas shadows camera={{ position: [0, 3, 6], fov: 45 }}>
@@ -233,6 +275,9 @@ const HigherLowerGame: React.FC = () => {
         </Canvas>
         <Loader />
       </div>
+      {showResultModal && (
+        <ResultModal won={winnings > 0} amount={winnings > 0 ? winnings : bet} result={currentCard ? `Carta final: ${currentCard.value}` : ''} onClose={handleCloseModal}/>
+      )}
     </div>
   );
 };

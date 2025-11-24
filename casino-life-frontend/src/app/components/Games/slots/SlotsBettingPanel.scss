@@ -1,97 +1,91 @@
-/* SlotsBettingPanel.scss - estilos para el panel de apuestas */
-
 .slots-betting-panel {
-  width: 320px;
-  padding: 14px;
-  border-radius: 12px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));
-  border: 1px solid rgba(255,255,255,0.04);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-  color: #e9edf6;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+    background: linear-gradient(135deg, #1a1f2e 0%, #0f1419 100%);
+    border-radius: 16px;
+    padding: 24px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(212, 175, 55, 0.2);
 
-/* Balance */
-.balance {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 700;
-  padding: 6px 10px;
-  border-radius: 8px;
-  background: rgba(255,255,255,0.03);
-}
+    .balance {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        background: rgba(212, 175, 55, 0.1);
+        border-radius: 12px;
+        border: 1px solid rgba(212, 175, 55, 0.3);
 
-.balance .amount {
-  color: #fff;
-}
+        .label {
+            color: #9ca3af;
+            font-size: 14px;
+            font-weight: 600;
+        }
 
-/* input monto */
-.bet-amount {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+        .amount {
+            color: #d4af37;
+            font-size: 24px;
+            font-weight: 700;
+        }
+    }
 
-.bet-amount input {
-  width: 100%;
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.06);
-  background: transparent;
-  color: #fff;
-  text-align: center;
-  font-weight: 700;
-}
+    .bet-amount {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        flex: 1;
 
-.quick-amounts {
-  display: flex;
-  gap: 8px;
-  margin-top: 6px;
-}
+        .bet-display {
+            padding: 20px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px solid rgba(55, 212, 212, 0.3);
+            border-radius: 12px;
+            color: #37d4cf;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+        }
 
-.quick-amount {
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  cursor: pointer;
-  background: #ffffff;
-  color: #000000;
-  font-weight: 700;
-  transition: 0.15s ease-in-out;
-}
+        .quick-amounts {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
 
-.quick-amount:hover {
-  background: #f2f2f2;
-}
+            .quick-amount {
+                padding: 16px;
+                background: rgba(212, 175, 55, 0.1);
+                border: 1px solid rgba(212, 175, 55, 0.3);
+                border-radius: 10px;
+                color: #d4af37;
+                font-weight: 700;
+                font-size: 16px;
+                cursor: pointer;
+                transition: all 0.2s;
 
-.quick-amount:disabled {
-  background: #bbbbbb;
-  cursor: not-allowed;
-}
+                &:hover:not(:disabled) {
+                    background: rgba(212, 175, 55, 0.2);
+                    transform: scale(1.05);
+                    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+                }
 
+                &:disabled {
+                    opacity: 0.4;
+                    cursor: not-allowed;
+                }
+            }
+        }
 
-/* place bet */
-.place-bet-btn {
-  margin-top: 6px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.12);
-  font-weight: 900;
-  cursor: pointer;
-  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(0,0,0,0.06));
-  color: #fff;
-}
-
-.place-bet-btn[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* small helper text */
-.helper {
-  font-size: 12px;
-  opacity: 0.75;
+        .helper {
+            color: #9ca3af;
+            font-size: 14px;
+            text-align: center;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: auto;
+        }
+    }
 }

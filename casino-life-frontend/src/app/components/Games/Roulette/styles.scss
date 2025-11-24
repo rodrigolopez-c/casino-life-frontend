@@ -1,0 +1,23 @@
+.roulette-container {
+    display: flex;
+    gap: 20px;
+    height: calc(100vh - 40px);
+    width: 100%;
+    background: #0b0f1a;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.roulette-sidebar {
+    flex-shrink: 0;
+    width: 320px;
+}
+
+.roulette-canvas-area {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #0a0e1a;
+}

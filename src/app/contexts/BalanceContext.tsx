@@ -22,7 +22,7 @@ export const BalanceProvider: React.FC<{ children: ReactNode }> = ({ children })
   const refreshBalance = async () => {
     try {
       const res = await getMyProfile();
-      setBalance(res.user.coins);
+      setBalance(parseFloat(Number(res.user.coins).toFixed(2)));
     } catch (err) {
       console.error("Error fetching balance:", err);
     } finally {

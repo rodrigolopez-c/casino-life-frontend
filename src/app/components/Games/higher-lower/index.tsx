@@ -31,11 +31,11 @@ const HigherLowerGame: React.FC = () => {
     if (bet > balance || bet <= 0) return;
 
     // 🔥 RESTAR apuesta
-    setBalance((b) => b - bet);
+    setBalance((b) => Math.floor(b - bet));
 
     // 🔥 BACKEND: registrar la pérdida inicial
     try {
-      await updateCoins("higher-lower", "lost", bet);
+      await updateCoins("higher-lower", "lost", Math.floor(bet));
     } catch (e) {
       console.error("Error updateCoins inicial:", e);
     }
@@ -84,11 +84,11 @@ const HigherLowerGame: React.FC = () => {
   const cashOut = async () => {
     const profit = winnings;  // incluye apuesta inicial multiplicada
 
-    setBalance(b => b + profit); // 🔥 sumamos profit TOTAL al balance
+    setBalance(b => Math.floor(b + profit));
 
     // 🔥 BACKEND: registrar ganancia
     try {
-        await updateCoins("higher-lower", "win", profit);
+       await updateCoins("higher-lower", "win", Math.floor(profit));
     } catch (e) {
         console.error("Error updateCoins cashout:", e);
     }

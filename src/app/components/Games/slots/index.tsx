@@ -1,11 +1,11 @@
-import React, { useRef, useState } from 'react';
-import SlotsCanvas from './SlotsCanvas';
-import SlotsBettingPanel from './SlotsBettingPanel';
-import ResultModal from '../../shared/ResultModal';
-import { useBalance } from '../../../contexts/BalanceContext';
-import { updateCoins } from '@/api/coins';
-import type { SlotsResult } from './SlotsCanvas';
-import './Slots.scss';
+import React, { useRef, useState } from "react";
+import SlotsCanvas from "./SlotsCanvas";
+import SlotsBettingPanel from "./SlotsBettingPanel";
+import ResultModal from "../../shared/ResultModal";
+import { useBalance } from "../../../contexts/BalanceContext";
+import { updateCoins } from "@/api/coins";
+import type { SlotsResult } from "./SlotsCanvas";
+import "./Slots.scss";
 
 export default function SlotsGame() {
   const { balance, setBalance } = useBalance();
@@ -25,7 +25,12 @@ export default function SlotsGame() {
   const spinTriggerRef = useRef<(() => void) | null>(null);
 
   const handlePlaceBet = (amount: number) => {
+    // Evitar apuestas de 0 o negativas
+    if (amount <= 0) return;
+
+    // Evitar apuestas mayores al balance
     if (amount > safeBalance) return;
+
     setCurrentBetAmount(amount);
   };
 
@@ -37,7 +42,7 @@ export default function SlotsGame() {
 
     // actualizar balance real del jugador
     if (won) {
-      setBalance(prev => (prev ?? 0) + grossWin);
+      setBalance((prev) => (prev ?? 0) + grossWin);
     }
 
     setLastSymbols(result.symbols);
@@ -47,16 +52,11 @@ export default function SlotsGame() {
     setIsSpinning(false);
 
     try {
-      await updateCoins(
-        "slots",
-        won ? "win" : "lost",
-        won ? grossWin : -bet
-      );
+      await updateCoins("slots", won ? "win" : "lost", won ? grossWin : -bet);
     } catch (err) {
       console.error("Error updating coins:", err);
     }
   };
-
 
   const handleCloseModal = () => {
     setShowResultModal(false);
@@ -66,13 +66,16 @@ export default function SlotsGame() {
   const handleLeverPull = () => {
     const bet = currentBetAmount;
 
+    // Bloquear apuestas inválidas
+    if (bet <= 0) return;
     if (safeBalance < bet) return;
+
     if (!spinTriggerRef.current) return;
 
     setLastBet(bet);
 
-    // --- DESCONTAR SOLO UNA VEZ ---
-    setBalance(prev => (prev ?? 0) - bet);
+    // Descontar apuesta
+    setBalance((prev) => (prev ?? 0) - bet);
 
     setIsSpinning(true);
     spinTriggerRef.current();
@@ -80,7 +83,6 @@ export default function SlotsGame() {
 
   return (
     <div className="slots-root">
-      
       <div className="slots-left">
         <SlotsBettingPanel
           balance={safeBalance}
@@ -104,7 +106,7 @@ export default function SlotsGame() {
         <ResultModal
           won={lastWin}
           amount={lastWin ? lastPayout : lastBet}
-          result={lastSymbols?.join(' — ') ?? ''}
+          result={lastSymbols?.join(" — ") ?? ""}
           onClose={handleCloseModal}
         />
       )}

@@ -1,7 +1,7 @@
 import { getMyProfile } from '../../api/profile';
 import { apiRequest } from '../../api/api';
 
-jest.mock('../../../api/api');
+jest.mock('../../api/api');
 
 describe('Profile API', () => {
     beforeEach(() => {

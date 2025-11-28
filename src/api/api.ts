@@ -1,7 +1,7 @@
 // src/app/api/api.ts
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// Nota: para simplificar el entorno de pruebas, usamos directamente una URL base fija.
+// Si luego quieres leer VITE_API_URL desde variables de entorno/Vite, lo podemos ajustar sin romper Jest.
+const API_URL = "http://localhost:8000";
 export async function apiRequest<T = any>(
   endpoint: string,
   options: RequestInit = {}

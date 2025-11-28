@@ -10,11 +10,8 @@ export default {
     },
     transform: {
         '^.+\\.tsx?$': ['ts-jest', {
-        tsconfig: {
-            jsx: 'react',
-            esModuleInterop: true,
-        }
-        }]
+            tsconfig: '<rootDir>/tsconfig.test.json',
+        }],
     },
     testMatch: [
         '**/__tests__/**/*.test.[jt]s?(x)',

@@ -2,18 +2,21 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '../../app/contexts/AuthContext';
 import { BalanceProvider } from '../../app/contexts/BalanceContext';
+import { PageProvider } from '../../app/contexts/BoardNavigation';
 import MainBoard from '../../app/Board/MainBoard';
 import * as profileApi from '../../api/profile';
 
-jest.mock('../../../api/profile');
-jest.mock('../../../api/auth');
+jest.mock('../../api/profile');
+jest.mock('../../api/auth');
 
 const renderMainBoard = () => {
     return render(
         <BrowserRouter>
             <AuthProvider>
                 <BalanceProvider>
-                    <MainBoard />
+                    <PageProvider>
+                        <MainBoard />
+                    </PageProvider>
                 </BalanceProvider>
             </AuthProvider>
         </BrowserRouter>
@@ -22,7 +25,7 @@ const renderMainBoard = () => {
 
 describe('Game Flow Integration', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        jest.resetAllMocks();
 
         (profileApi.getMyProfile as jest.Mock).mockResolvedValue({
             user: {
@@ -74,10 +77,8 @@ describe('Game Flow Integration', () => {
             expect(screen.getByText('Games')).toBeInTheDocument();
             expect(screen.getByText('Profile')).toBeInTheDocument();
             expect(screen.getByText('Ranking')).toBeInTheDocument();
+            expect(screen.getByText('1000')).toBeInTheDocument();
         });
-
-        // Balance should be visible
-        expect(screen.getByText('1000')).toBeInTheDocument();
     });
 
     test('Auth + Balance integration: contexts work together', async () => {

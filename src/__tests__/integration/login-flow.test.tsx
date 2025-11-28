@@ -4,8 +4,8 @@ import App from '../../app/App';
 import * as authApi from '../../api/auth';
 import * as profileApi from '../../api/profile';
 
-jest.mock('../../../api/auth');
-jest.mock('../../../api/profile');
+jest.mock('../../api/auth');
+jest.mock('../../api/profile');
 
 describe('Login Flow Integration', () => {
     beforeEach(() => {
@@ -27,11 +27,7 @@ describe('Login Flow Integration', () => {
             history: [],
         });
 
-        render(
-            <BrowserRouter>
-                <App />
-            </BrowserRouter>
-        );
+        render(<App />);
 
         // Wait for login page to load
         await waitFor(() => {
@@ -78,11 +74,7 @@ describe('Login Flow Integration', () => {
             history: [],
         });
 
-        render(
-            <BrowserRouter>
-                <App />
-            </BrowserRouter>
-        );
+        render(<App />);
 
         // Wait for login page
         await waitFor(() => {
@@ -120,11 +112,7 @@ describe('Login Flow Integration', () => {
         // Mock window.alert
         const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
 
-        render(
-            <BrowserRouter>
-                <App />
-            </BrowserRouter>
-        );
+        render(<App />);
 
         await waitFor(() => {
             expect(screen.getByText('Sign in with Email')).toBeInTheDocument();

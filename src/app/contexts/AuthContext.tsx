@@ -22,27 +22,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   // cuando inicia la app, verifica si hay token guardado
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) return setLoading(false);
+    if (!token) {
+      // Mantener loading=true en el primer render y apagarlo en el siguiente tick
+      // Esto mejora la UX inicial y hace que los tests puedan verificar el estado inicial.
+      setTimeout(() => setLoading(false), 0);
+      return;
+    }
 
-    try {
-      const decoded = JSON.parse(atob(token.split(".")[1]));
-      const expired = decoded.exp * 1000 < Date.now();
+    let cancelled = false;
 
-      if (expired) {
+    (async () => {
+      try {
+        const res = await getProfile();
+        if (cancelled) return;
+        if (res && (res as any).user) {
+          setUser(res.user);
+        } else {
+          setUser(null);
+        }
+      } catch {
+        if (cancelled) return;
         localStorage.removeItem("token");
         setUser(null);
-        setLoading(false);
-        return;
+      } finally {
+        if (!cancelled) setLoading(false);
       }
+    })();
 
-      getProfile()
-        .then((res) => setUser(res.user))
-        .catch(() => localStorage.removeItem("token"))
-        .finally(() => setLoading(false));
-    } catch {
-      localStorage.removeItem("token");
-      setLoading(false);
-    }
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // login normal

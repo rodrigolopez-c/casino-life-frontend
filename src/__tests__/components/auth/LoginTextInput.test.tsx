@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
+import type React from 'react';
 import LoginTextInput from '../../../app/components/login/LoginTextInput/LoginTextInput';
 
 const renderWithRouter = (component: React.ReactElement) => {

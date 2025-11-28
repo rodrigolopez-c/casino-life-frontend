@@ -1,7 +1,7 @@
 import { login, register, getProfile } from '../../api/auth';
 import { apiRequest } from '../../api/api';
 
-jest.mock('../../../api/api');
+jest.mock('../../api/api');
 
 describe('Auth API', () => {
     beforeEach(() => {

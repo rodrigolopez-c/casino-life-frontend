@@ -141,6 +141,7 @@ const SlotsCanvas: React.FC<SlotsCanvasProps> = ({
         <div className="slots-intro">
           <div className="intro-icon">🎰</div>
           <div className="intro-title">Slots Machine</div>
+          <div className="intro-text">El juego de Slots! Tira la palanca!</div>
 
           <button
             className="intro-btn"

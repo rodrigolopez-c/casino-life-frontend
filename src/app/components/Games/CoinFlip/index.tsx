@@ -30,9 +30,6 @@ export default function CoinFlipGame() {
         currentBetRef.current = bet;
         setIsFlipping(true);
 
-        // Restamos la apuesta inmediatamente
-        setBalance(prev => prev - amount);
-
         setTimeout(() => {
             if (flipTriggerRef.current) flipTriggerRef.current();
         }, 50);

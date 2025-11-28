@@ -34,9 +34,6 @@ export default function DicesGame() {
     currentBetRef.current = bet;
     setIsRolling(true);
 
-    // 🔥 Restar apuesta en el front inmediatamente
-    setBalance(prev => prev - amount);
-
     setTimeout(() => {
       if (rollTriggerRef.current) {
         rollTriggerRef.current();

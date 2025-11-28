@@ -31,8 +31,6 @@ export default function RouletteGame() {
         currentBetRef.current = bet;
         setIsSpinning(true);
 
-        setBalance(prev => prev - amount);
-
         const resultNumber = generateResultForBet(betType, value);
 
         setTimeout(() => {

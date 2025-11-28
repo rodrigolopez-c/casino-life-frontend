@@ -101,16 +101,6 @@ export default function Login() {
             style={emailStep ? { display: "none" } : { display: "block" }}
           />
 
-          {/* Guest */}
-          <LoginButton
-            text="Play as Guest"
-            widthRem={25}
-            heightRem={4}
-            variant="secondary"
-            onClick={() => alert("Modo invitado aún no implementado")}
-            style={emailStep ? { display: "none" } : { display: "block" }}
-          />
-
           {/* Step Email / Password */}
           {emailStep ? (
             <LoginTextInput

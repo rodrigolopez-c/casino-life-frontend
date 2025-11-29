@@ -48,38 +48,37 @@ const LoginTextInput: React.FC<Props> = ({
 
   return (
     <form className="login-text-input" onSubmit={handleSubmit} noValidate style={style}>
-      <div
-        className="input-group"
-        style={{ display: step === "email" ? "flex" : "none" }}
-      >
-        <label className="sr-only" htmlFor="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          placeholder="Enter your email adress..."
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          autoFocus={autoFocus}
-          autoComplete="email"
-          spellCheck={false}
-          inputMode="email"
-        />
-      </div>
-      <div
-        className="input-group"
-        style={{ display: step === "password" ? "flex" : "none" }}
-      >
-        <label className="sr-only" htmlFor="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          placeholder="Enter your password..."
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          autoFocus
-          autoComplete="current-password"
-        />
-      </div>
+      {step === "email" && (
+        <div className="input-group">
+          <label className="sr-only" htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            placeholder="Enter your email adress..."
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoFocus={autoFocus}
+            autoComplete="email"
+            spellCheck={false}
+            inputMode="email"
+          />
+        </div>
+      )}
+
+      {step === "password" && (
+        <div className="input-group">
+          <label className="sr-only" htmlFor="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            placeholder="Enter your password..."
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoFocus
+            autoComplete="current-password"
+          />
+        </div>
+      )}
 
       <button
         type="submit"

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import { getMyProfile } from "@/api/profile";
+import { getMyProfile } from "../../api/profile";
 
 type BalanceContextType = {
   balance: number | null;

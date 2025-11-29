@@ -1,6 +1,27 @@
+import React from "react";
+import type { ComponentType } from "react";
+
+import CoinFlipComponent from "../components/Games/CoinFlip";
+import coinFlipConfig from "../components/Games/CoinFlip/config.json";
+
+import RouletteComponent from "../components/Games/Roulette";
+import rouletteConfig from "../components/Games/Roulette/config.json";
+
+import BlackjackComponent from "../components/Games/blackjack";
+import blackjackConfig from "../components/Games/blackjack/config.json";
+
+import DicesComponent from "../components/Games/dices";
+import dicesConfig from "../components/Games/dices/config.json";
+
+import HigherLowerComponent from "../components/Games/higher-lower";
+import higherLowerConfig from "../components/Games/higher-lower/config.json";
+
+import SlotsComponent from "../components/Games/slots";
+import slotsConfig from "../components/Games/slots/config.json";
+
 export type GameModule = {
   id: string;
-  Component: React.ComponentType;
+  Component: ComponentType;
   config: {
     title: string;
     description: string;
@@ -8,30 +29,11 @@ export type GameModule = {
   };
 };
 
-// 🧩 Escaneo de todos los juegos dentro de app/components/Games/
-const gameModules = import.meta.glob('/src/app/components/Games/*/index.tsx', { eager: true });
-const gameConfigs = import.meta.glob('/src/app/components/Games/*/config.json', { eager: true });
-
-// Debug: verifica detección
-console.log('🎮 Detected game modules:', Object.keys(gameModules));
-console.log('🧩 Detected game configs:', Object.keys(gameConfigs));
-
-export const games: GameModule[] = Object.entries(gameModules).map(([path, mod]) => {
-  const match = path.match(/\/Games\/([^/]+)\/index\.tsx$/);
-  const id = match?.[1] ?? 'unknown';
-
-  const Component = (mod as any).default;
-  const configPath = Object.keys(gameConfigs).find((p) => p.includes(`/Games/${id}/config.json`));
-
-  const config = configPath
-    ? (gameConfigs[configPath] as any).default
-    : {
-        title: id,
-        description: 'No description provided.',
-        imageUrl: '/GamesCards/default.png',
-      };
-
-  return { id, Component, config };
-});
-
-console.log('✅ Loaded games:', games);
+export const games: GameModule[] = [
+  { id: "CoinFlip", Component: CoinFlipComponent, config: coinFlipConfig },
+  { id: "Roulette", Component: RouletteComponent, config: rouletteConfig },
+  { id: "blackjack", Component: BlackjackComponent, config: blackjackConfig },
+  { id: "dices", Component: DicesComponent, config: dicesConfig },
+  { id: "higher-lower", Component: HigherLowerComponent, config: higherLowerConfig },
+  { id: "slots", Component: SlotsComponent, config: slotsConfig },
+];
